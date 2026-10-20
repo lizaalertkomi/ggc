@@ -271,7 +271,7 @@
             document.getElementById('result-screen').classList.remove('active');
             document.getElementById('menu-screen').classList.add('active');
         }
-        // Функции управления таймером
+               // Функции управления таймером
         function startTimer() {
             clearInterval(timerInterval);
             timerSeconds = 0;
@@ -303,7 +303,7 @@
             document.getElementById('menu-screen').classList.remove('active');
             document.getElementById('test-screen').classList.add('active');
             
-            startTimer(); // Запуск отсчёта секунд при старте теста
+            startTimer();
             loadQuestion();
         }
 
@@ -353,21 +353,37 @@
             currentQuestionIndex++;
             if (currentQuestionIndex < totalQuestionsCount) { loadQuestion(); } 
             else { 
-                stopTimer(); // Фиксация времени на финише
+                stopTimer();
                 showResults(); 
             }
+        }
+
+        // Вспомогательная функция для склонения русских слов
+        function pluralize(number, one, two, many) {
+            let n = Math.abs(number);
+            n %= 100;
+            if (n >= 5 && n <= 20) { return many; }
+            n %= 10;
+            if (n === 1) { return one; }
+            if (n >= 2 && n <= 4) { return two; }
+            return many;
         }
 
         function showResults() {
             document.getElementById('test-screen').classList.remove('active');
             document.getElementById('result-screen').classList.add('active');
             
-            document.getElementById('result-score-value').textContent = `Вы набрали ${score} баллов`;
+            // Склоняем баллы
+            const scoreText = pluralize(score, 'балл', 'балла', 'баллов');
+            document.getElementById('result-score-value').textContent = `Вы набрали ${score} ${scoreText}`;
             
-            // Расчет и красивый вывод итогового времени в шаблон
+            // Склоняем минуты и секунды
             const finalMins = Math.floor(timerSeconds / 60);
             const finalSecs = timerSeconds % 60;
-            document.getElementById('result-time-value').textContent = `Ваше время: ${finalMins} мин. ${finalSecs} сек.`;
+            const minsText = pluralize(finalMins, 'минуту', 'минуты', 'минут');
+            const secsText = pluralize(finalSecs, 'секунду', 'секунды', 'секунд');
+            
+            document.getElementById('result-time-value').textContent = `Ваше время: ${finalMins} ${minsText} ${finalSecs} ${secsText}`;
             
             let comment = "";
             let percent = (score / totalQuestionsCount) * 100;
@@ -388,5 +404,3 @@
 
         initTheme();
     </script>
-</body>
-</html>
