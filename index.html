@@ -111,7 +111,8 @@
         .welcome-title { font-size: 18px; font-weight: 700; }
         .user-name { color: var(--la-orange); }
 
-        .test-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 14px; font-weight: 600; color: var(--text-muted); }
+        .test-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 14px; font-weight: 600; color: var(--text-muted); gap: 10px; }
+        .test-header-left { display: flex; flex-direction: column; text-align: left; gap: 2px; }
         .map-card { background: #eef0f3; width: 100%; height: 180px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 25px; border: 1px solid var(--border-color); overflow: hidden; }
         .map-card img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
@@ -122,7 +123,8 @@
         .btn-answer.correct { background-color: var(--success-color) !important; color: white !important; font-weight: 700; }
         .btn-answer.wrong { background-color: var(--error-color) !important; color: white !important; }
 
-        .result-score { font-size: 42px; font-weight: 900; color: var(--la-orange); margin: 20px 0; }
+        .result-score { font-size: 42px; font-weight: 900; color: var(--la-orange); margin-top: 20px; margin-bottom: 5px; }
+        .result-time { font-size: 18px; font-weight: 700; color: var(--text-muted); margin-bottom: 25px; }
         .result-text { font-size: 18px; margin-bottom: 30px; font-weight: 600; }
 
         @media (max-width: 480px) {
@@ -174,8 +176,12 @@
         <!-- ЭКРАН 3: ТЕСТИРОВАНИЕ -->
         <div id="test-screen" class="screen">
             <div class="test-header">
-                <span id="test-category-title">Режим</span>
-                <span id="question-counter">Вопрос: 1/34</span>
+                <div class="test-header-left">
+                    <span id="test-category-title">Режим</span>
+                    <span id="question-counter">Вопрос: 1/34</span>
+                </div>
+                <!-- Окно отображения таймера на экране -->
+                <div style="font-size: 16px; font-weight: 700; color: var(--la-orange);" id="timer-display">Время: 00:00</div>
             </div>
             <div class="map-card">
                 <img id="question-image" src="" alt="Условный знак ГГЦ">
@@ -188,8 +194,10 @@
         <div id="result-screen" class="screen">
             <div class="welcome-title">Тест завершен!</div>
             <div class="result-score" id="result-score-value">Вы набрали 0 баллов</div>
+            <!-- Сюда скрипт вставит точное время прохождения -->
+            <div class="result-time" id="result-time-value">Ваше время: 0 мин. 0 сек.</div>
             <div class="result-text" id="result-comment">Отличный результат!</div>
-            <button class="btn btn-primary" onclick="backToMenu()">В главное меню</button>
+            <button class="btn btn-primary" onclick="backToMenu()">Вернуться в меню</button>
         </div>
     </div>
     <script>
@@ -213,7 +221,11 @@
         let currentQuestionsList = [];
         let currentQuestionIndex = 0;
         let score = 0;
-        const totalQuestionsCount = areaNames.length; // Автоматически пересчитывает лимит на 34
+        const totalQuestionsCount = areaNames.length;
+
+        // Переменные для контроля работы таймера
+        let timerSeconds = 0;
+        let timerInterval = null;
         function initTheme() {
             const savedTheme = localStorage.getItem('la_theme') || 'light';
             document.documentElement.setAttribute('data-theme', savedTheme);
@@ -259,6 +271,24 @@
             document.getElementById('result-screen').classList.remove('active');
             document.getElementById('menu-screen').classList.add('active');
         }
+        // Функции управления таймером
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerSeconds = 0;
+            document.getElementById('timer-display').textContent = "Время: 00:00";
+            
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                const mins = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+                const secs = (timerSeconds % 60).toString().padStart(2, '0');
+                document.getElementById('timer-display').textContent = `Время: ${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
         function startTest(type) {
             if (type !== 'area') {
                 alert('Этот режим находится в разработке. Пожалуйста, выберите "Площадные ориентиры"');
@@ -266,13 +296,14 @@
             }
             document.getElementById('test-category-title').textContent = "Площадные ориентиры";
             
-            // Запуск полного марафона: перемешиваем случайным образом все 34 знака из базы
             currentQuestionsList = [...areaNames].sort(() => 0.5 - Math.random());
             currentQuestionIndex = 0;
             score = 0;
 
             document.getElementById('menu-screen').classList.remove('active');
             document.getElementById('test-screen').classList.add('active');
+            
+            startTimer(); // Запуск отсчёта секунд при старте теста
             loadQuestion();
         }
 
@@ -287,7 +318,6 @@
             let wrongOptions = areaNames.filter(name => name !== currentCorrectName);
             wrongOptions.sort(() => 0.5 - Math.random());
             
-            // Набираем ложные варианты (итого 7 кнопок на экране)
             for (let i = 0; i < 6; i++) { answers.push(wrongOptions[i]); }
             answers.sort(() => 0.5 - Math.random());
             
@@ -309,7 +339,7 @@
             
             if (selectedAnswer === correctAnswer) {
                 selectedButton.classList.add('correct');
-                score++; // Каждая позиция приносит 1 балл
+                score++; 
             } else {
                 selectedButton.classList.add('wrong');
                 buttons.forEach(btn => {
@@ -322,15 +352,22 @@
         function nextQuestion() {
             currentQuestionIndex++;
             if (currentQuestionIndex < totalQuestionsCount) { loadQuestion(); } 
-            else { showResults(); }
+            else { 
+                stopTimer(); // Фиксация времени на финише
+                showResults(); 
+            }
         }
 
         function showResults() {
             document.getElementById('test-screen').classList.remove('active');
             document.getElementById('result-screen').classList.add('active');
             
-            // Вывод строки результатов строго по вашему техническому заданию
             document.getElementById('result-score-value').textContent = `Вы набрали ${score} баллов`;
+            
+            // Расчет и красивый вывод итогового времени в шаблон
+            const finalMins = Math.floor(timerSeconds / 60);
+            const finalSecs = timerSeconds % 60;
+            document.getElementById('result-time-value').textContent = `Ваше время: ${finalMins} мин. ${finalSecs} сек.`;
             
             let comment = "";
             let percent = (score / totalQuestionsCount) * 100;
@@ -338,7 +375,7 @@
             if (score === totalQuestionsCount) comment = "Идеально! Полная победа, ни одной ошибки на дистанции в 34 знака!";
             else if (percent >= 80) comment = "Отличный результат! Карты ГГЦ изучены на высоком уровне.";
             else if (percent >= 50) comment = "Хорошо, но есть над чем поработать.";
-            else comment = "Нужно подтянуть теорию. Пройдите полный марафон ещё раз!";
+            else comment = "Нужно подтянуть теорию. Попробуйте пройти марафон ещё раз!";
             
             document.getElementById('result-comment').textContent = comment;
         }
