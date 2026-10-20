@@ -286,6 +286,7 @@
             document.getElementById('result-screen').classList.remove('active');
             document.getElementById('menu-screen').classList.add('active');
         }
+               // Функции управления таймером
         function startTimer() {
             clearInterval(timerInterval);
             timerSeconds = 0;
@@ -394,7 +395,8 @@
             const minsText = pluralize(finalMins, 'минуту', 'минуты', 'минут');
             const secsText = pluralize(finalSecs, 'секунду', 'секунды', 'секунд');
             
-            document.getElementById('result-time-value').textContent = `Ваше время: ${finalMins} ${minsText} ${finalSecs} ${secsText}`;
+            const timeString = `${finalMins} ${minsText} ${finalSecs} ${secsText}`;
+            document.getElementById('result-time-value').textContent = `Ваше время: ${timeString}`;
             
             let comment = "";
             let percent = (score / totalQuestionsCount) * 100;
@@ -402,9 +404,37 @@
             if (score === totalQuestionsCount) comment = "Идеально! Полная победа, ни одной ошибки на дистанции в 34 знака!";
             else if (percent >= 80) comment = "Отличный результат! Карты ГГЦ изучены на высоком уровне.";
             else if (percent >= 50) comment = "Хорошо, но есть над чем поработать.";
-            else comment = "Нужно подтянуть теорию. Попробуйте пройти тест ещё раз!";
+            else comment = "Нужно подтянуть теорию. Попробуйте пройти марафон ещё раз!";
             
             document.getElementById('result-comment').textContent = comment;
+
+            // --- ШАГ 1. ПРОВЕРЬТЕ АДРЕС СКРИПТА В ФАЙЛЕ INDEX.HTML ---
+            // Вставьте вашу длинную веб-ссылку развертывания макроса строго между кавычек:
+            var googleScriptUrl = "https://google.com";
+
+            // Сбор данных для передачи макросу
+            const payload = {
+                fio: localStorage.getItem('la_fio') || 'Не указано',
+                callsign: localStorage.getItem('la_callsign') || 'Нет',
+                score: `${score} из ${totalQuestionsCount}`,
+                time: timeString
+            };
+
+            // Если адрес макроса тестовый — блокируем отправку в никуда
+            if (googleScriptUrl === "https://google.com") {
+                console.log("Данные не отправлены: настройте googleScriptUrl");
+                return;
+            }
+
+            // Фоновая отправка на макрос Google через POST-запрос
+            fetch(googleScriptUrl, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            })
+            .then(() => console.log("Статистика успешно улетела в Google Таблицу!"))
+            .catch(error => console.log("Ошибка отправки макроса:", error));
         }
 
         function backToMenu() {
