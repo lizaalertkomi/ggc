@@ -156,126 +156,6 @@
         }
     </style>
 </head>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 15px;
-            padding-top: 75px;
-            position: relative;
-        }
-
-        .theme-toggle-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            padding: 8px 14px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            box-shadow: 0 4px 12px var(--card-shadow);
-            z-index: 10;
-        }
-
-        .container {
-            background-color: var(--card-bg);
-            padding: 30px 20px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px var(--card-shadow);
-            width: 100%;
-            max-width: 550px;
-            text-align: center;
-            border: 1px solid var(--border-color);
-        }
-
-        .logo-container { margin-bottom: 20px; }
-        .logo { font-size: 28px; font-weight: 900; letter-spacing: 1px; }
-        .logo span { color: var(--la-orange); }
-        .region-tag { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-top: 2px; opacity: 0.8; }
-        .subtitle { color: var(--text-muted); font-size: 13px; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
-
-        .form-group { text-align: left; margin-bottom: 18px; }
-        label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 600; }
-        label span { color: var(--la-orange); }
-        input[type="text"] { width: 100%; padding: 14px; background-color: var(--input-bg); border: 1px solid var(--input-border); border-radius: 8px; color: var(--text-color); font-size: 16px; outline: none; }
-        input[type="text"]:focus { border-color: var(--la-orange); box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.2); }
-
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .btn-primary { background-color: var(--la-orange); color: #ffffff; text-transform: uppercase; }
-        .btn-primary:hover { background-color: var(--la-orange-hover); }
-
-        .btn-menu { background-color: var(--btn-menu-bg); color: var(--text-color); margin-bottom: 12px; justify-content: flex-start; padding-left: 20px; font-weight: 600; }
-        .btn-menu:hover { background-color: var(--btn-menu-hover); border-left: 4px solid var(--la-orange); padding-left: 16px; }
-        .btn-total { background-color: transparent; border: 2px solid var(--la-orange); color: var(--la-orange); margin-top: 15px; text-transform: uppercase; }
-        .btn-total:hover { background-color: var(--la-orange); color: #ffffff; }
-
-        .screen { display: none; }
-        .screen.active { display: block; }
-
-        .welcome-block { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color); text-align: left; }
-        .welcome-title { font-size: 18px; font-weight: 700; }
-        .user-name { color: var(--la-orange); }
-
-        .test-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 14px; font-weight: 600; color: var(--text-muted); gap: 10px; }
-        .test-header-left { display: flex; flex-direction: column; text-align: left; gap: 2px; }
-        
-        .map-card { background: #eef0f3; width: 100%; height: 180px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid var(--border-color); overflow: hidden; }
-        .map-card img { max-width: 100%; max-height: 100%; object-fit: contain; }
-
-        /* Текстовые ответы (4 варианта) */
-        .answers-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
-        .btn-answer { background-color: var(--btn-menu-bg); color: var(--text-color); font-weight: 500; font-size: 14px; padding: 12px 15px; border: 1px solid transparent; border-radius: 8px; cursor: pointer; text-align: left; width: 100%; }
-        .btn-answer:hover:not(:disabled) { background-color: var(--btn-menu-hover); border-color: var(--text-muted); }
-        .btn-answer.correct { background-color: var(--success-color) !important; color: white !important; font-weight: 700; }
-        .btn-answer.wrong { background-color: var(--error-color) !important; color: white !important; }
-
-        /* Сетка для усложненного режима (4 картинки) */
-        .images-answers-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px; }
-        .btn-image-variant { background-color: var(--btn-menu-bg); border: 2px solid var(--border-color); border-radius: 8px; padding: 8px; cursor: pointer; height: 110px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .btn-image-variant:hover:not(:disabled) { border-color: var(--la-orange); }
-        .btn-image-variant img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .btn-image-variant.correct { border-color: var(--success-color) !important; background-color: rgba(46, 125, 50, 0.1); }
-        .btn-image-variant.wrong { border-color: var(--error-color) !important; background-color: rgba(198, 40, 40, 0.1); }
-
-        .result-score { font-size: 36px; font-weight: 900; color: var(--la-orange); margin-top: 15px; margin-bottom: 5px; }
-        .result-time { font-size: 16px; font-weight: 700; color: var(--text-muted); margin-bottom: 20px; }
-        .result-text { font-size: 16px; margin-bottom: 25px; font-weight: 600; }
-
-        /* УСИЛЕННАЯ МОБИЛЬНАЯ АДАПТАЦИЯ (ЭКРАНЫ СМАРТФОНОВ) */
-        @media (max-width: 480px) {
-            body { padding: 65px 8px 10px 8px; }
-            .container { padding: 15px 12px; border-radius: 8px; }
-            .logo { font-size: 22px; }
-            .subtitle { margin-bottom: 15px; font-size: 11px; }
-            .logo-container { margin-bottom: 10px; }
-            .welcome-block { margin-bottom: 15px; padding-bottom: 10px; }
-            .welcome-title { font-size: 16px; }
-            .map-card { height: 120px; margin-bottom: 12px; }
-            .answers-grid { gap: 6px; margin-bottom: 12px; }
-            .btn-answer { font-size: 13px; padding: 10px 12px; border-radius: 6px; }
-            .btn-image-variant { height: 85px; padding: 4px; }
-            .images-answers-grid { gap: 8px; margin-bottom: 12px; }
-            .btn { padding: 12px; font-size: 14px; }
-            .theme-toggle-btn { top: 10px; right: 10px; padding: 6px 10px; font-size: 12px; }
-            .result-score { font-size: 28px; }
-        }
-    </style>
-</head>
 <body>
 
     <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-btn">
@@ -344,7 +224,7 @@
         const areaDatabase = [
             "Поверхность моховая", "Поверхности кочковатые", "Редкая жилая застройка",
             "Поверхности глинистые", "Кустарнички (багульник, черника, вереск и др.)", 
-            "Отдельные группы колючих кустарников", "Болото проходимое", 
+            "Отдельные группы колючих кустарников", "Заросли кустарника", "Болото проходимое", 
             "Растительность высокотравная (высотой в метр и более)", "Вырубка",
             "Щебёночные и каменистые россыпи", "Растительность травяная, луговая (разнотравье)",
             "Фруктовые сады", "Лес естественный", "Лес с буреломом", "Ягодники", 
@@ -354,15 +234,13 @@
             "Поверхности песчаные", "Горелый и сухостойный лес", "Овраги и промоины", 
             "Редколесье", "Лес высаженный", "Заросли камышовые и тростниковые", 
             "Поверхности с валунами", "Виноградники", "Промышленные отходы", 
-            "Растительность лишайниковая (ягель и др.)", "Заросли колючего кустарника",
-            "Заросли кустарника"
+            "Растительность лишайниковая (ягель и др.)", "Заросли колючего кустарника"
         ];
 
         let currentQuestionsList = [];
         let currentQuestionIndex = 0;
         let score = 0;
-        // Задаем лимит марафона строго в 50 вопросов
-        const totalQuestionsCount = 50; 
+        const totalQuestionsCount = 50; // Дистанция марафона
 
         let timerSeconds = 0;
         let timerInterval = null;
@@ -430,23 +308,21 @@
                 alert('Этот режим находится в разработке. Пожалуйста, выберите "Площадные ориентиры"');
                 return;
             }
-            document.getElementById('test-category-title').textContent = "Площадные ориентиры";
             
-            // --- НОВЫЙ АЛГОРИТМ НА 50 ВОПРОСОВ ИЗ 34 КАРТИНОК ---
             let list = [];
-            // 1. Сначала обязательно кладем все ваши 34 знака, чтобы проверился каждый
-            areaDatabase.forEach(name => list.push({ name: name }));
+            // Закидываем сначала все ваши 34 знака из Блока 5
+            areaDatabase.forEach(name => list.push({ name: name.trim() }));
             
-            // 2. Добираем ещё 16 случайных повторок из вашей же базы, чтобы вышло ровно 50
+            // Добираем 16 случайных повторок строго из вашей же базы
             while(list.length < totalQuestionsCount) {
                 let randomName = areaDatabase[Math.floor(Math.random() * areaDatabase.length)];
-                list.push({ name: randomName });
+                list.push({ name: randomName.trim() });
             }
             
-            // 3. Полностью хаотично перемешиваем все 50 карточек
+            // Перемешиваем марафон из 50 вопросов
             list.sort(() => 0.5 - Math.random());
             
-            // 4. Случайным образом назначаем тип каждому вопросу (50% — текст, 50% — выбор картинки)
+            // Распределяем типы карточек случайным образом (50% — текст, 50% — выбор картинки)
             currentQuestionsList = list.map(item => {
                 let mode = Math.random() > 0.5 ? "text-answers" : "image-answers";
                 return { name: item.name, type: mode };
@@ -470,14 +346,16 @@
             const container = document.getElementById('answers-container');
             container.innerHTML = '';
 
-            // Режим 1: 1 Картинка + 4 Кнопки текста
+            const allAllowedNames = areaDatabase.map(q => q.trim());
+
+            // Режим 1: Обычный (Картинка сверху, 4 компактные кнопки текста снизу)
             if (currentQuestion.type === "text-answers") {
                 document.getElementById('test-category-title').textContent = "Определите знак по картинке";
                 document.getElementById('map-card').style.display = "flex";
                 document.getElementById('question-image').src = `plochad/${currentQuestion.name}.png`;
                 
                 let answers = [currentQuestion.name];
-                let wrongOptions = areaDatabase.filter(name => name !== currentQuestion.name);
+                let wrongOptions = allAllowedNames.filter(name => name !== currentQuestion.name);
                 wrongOptions.sort(() => 0.5 - Math.random());
                 for (let i = 0; i < 3; i++) { answers.push(wrongOptions[i]); }
                 answers.sort(() => 0.5 - Math.random());
@@ -491,13 +369,13 @@
                     container.appendChild(button);
                 });
 
-            // Режим 2: Текст задания + 4 Картинки вариантов
+            // Режим 2: Усложненный (Текст задания сверху, 4 картинки-варианта снизу)
             } else if (currentQuestion.type === "image-answers") {
                 document.getElementById('test-category-title').textContent = `Найдите изображение: "${currentQuestion.name}"`;
                 document.getElementById('map-card').style.display = "none";
                 
                 let variantNames = [currentQuestion.name];
-                let wrongOptions = areaDatabase.filter(name => name !== currentQuestion.name);
+                let wrongOptions = allAllowedNames.filter(name => name !== currentQuestion.name);
                 wrongOptions.sort(() => 0.5 - Math.random());
                 for (let i = 0; i < 3; i++) { variantNames.push(wrongOptions[i]); }
                 variantNames.sort(() => 0.5 - Math.random());
@@ -567,6 +445,7 @@
             else comment = "Нужно подтянуть теорию. Пройдите полный марафон ещё раз!";
             document.getElementById('result-comment').textContent = comment;
 
+            // --- ШАГ 1. СЮДА ВСТАВЛЯЕТСЯ ССЫЛКА МАКРОСА GOOGLE ТАБЛИЦ (/exec) ---
             var googleScriptUrl = "https://google.com";
 
             const payload = {
