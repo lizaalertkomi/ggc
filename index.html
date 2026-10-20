@@ -5,13 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тренажер ГГЦ — ЛизаАлерт</title>
     <style>
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тренажер ГГЦ — ЛизаАлерт</title>
-    <style>
+        /* Базовые цвета для СВЕТЛОЙ темы */
+        :root {
+            --bg-color: #f4f5f7;
+            --card-bg: #ffffff;
+            --la-orange: #ff6600;
+            --la-orange-hover: #e05500;
+            --text-color: #222222;
+            --text-muted: #666666;
+            --input-border: #cccccc;
+            --input-bg: #ffffff;
+            --btn-menu-bg: #eaeaea;
+            --btn-menu-hover: #dddddd;
+            --card-shadow: rgba(0, 0, 0, 0.08);
+            --border-color: #e0e0e0;
+            --success-color: #2e7d32;
+            --error-color: #c62828;
+        }
+
+        /* Базовые цвета для ТЕМНОЙ темы */
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text-color: #ffffff;
+            --text-muted: #aaaaaa;
+            --input-border: #444444;
+            --input-bg: #222222;
+            --btn-menu-bg: #3a3a3a;
+            --btn-menu-hover: #4a4a4a;
+            --card-shadow: rgba(0, 0, 0, 0.4);
+            --border-color: #444444;
+        }
         * {
             box-sizing: border-box;
             margin: 0;
@@ -280,10 +304,17 @@
         function stopTimer() { clearInterval(timerInterval); }
 
         function startTest(type) {
+            // Назначаем имя теста для распределения по вкладкам
+            if (type === 'area') window.currentTestModeName = "Площадные ориентиры";
+            else if (type === 'linear') window.currentTestModeName = "Линейные ориентиры";
+            else if (type === 'point') window.currentTestModeName = "Точечные ориентиры";
+            else window.currentTestModeName = "Общий тест";
+
             if (type !== 'area') {
                 alert('Этот режим находится в разработке. Пожалуйста, выберите "Площадные ориентиры"');
                 return;
             }
+            document.getElementById('test-category-title').textContent = "Площадные ориентиры";
             
             let list = [];
             areaDatabase.forEach(name => list.push({ name: name.trim() }));
@@ -320,7 +351,7 @@
 
             const allAllowedNames = areaDatabase.map(q => q.trim());
 
-            // --- РЕЖИМ 1: 1 КАРТИНКА + 6 ВАРИАНТОВ ОТВЕТА ТЕКСТОМ ---
+            // Режим 1: 1 Картинка + 6 Кнопок текста (настроено строго по вашему ТЗ)
             if (currentQuestion.type === "text-answers") {
                 document.getElementById('test-category-title').textContent = "Определите знак по картинке";
                 document.getElementById('map-card').style.display = "flex";
@@ -329,8 +360,6 @@
                 let answers = [currentQuestion.name];
                 let wrongOptions = allAllowedNames.filter(name => name !== currentQuestion.name);
                 wrongOptions.sort(() => 0.5 - Math.random());
-                
-                // Набираем ровно 5 ложных текстовых вариантов (итого ровно 6 кнопок на экране)
                 for (let i = 0; i < 5; i++) { answers.push(wrongOptions[i]); }
                 answers.sort(() => 0.5 - Math.random());
                 
@@ -343,7 +372,7 @@
                     container.appendChild(button);
                 });
 
-            // --- РЕЖИМ 2: ТЕКСТ ЗАДАНИЯ + 4 КАРТИНКИ ВАРИАНТОВ ---
+            // Режим 2: Текст задания + 4 Картинки вариантов
             } else if (currentQuestion.type === "image-answers") {
                 document.getElementById('test-category-title').textContent = `Найдите изображение: "${currentQuestion.name}"`;
                 document.getElementById('map-card').style.display = "none";
@@ -419,10 +448,11 @@
             else comment = "Нужно потренироваться. Пройдите полный марафон ещё раз!";
             document.getElementById('result-comment').textContent = comment;
 
-            // Ваша рабочая ссылка макроса Google Таблиц успешно встроена:
-            var googleScriptUrl = "https://script.google.com/macros/s/AKfycbzMTu4luH5HS48ECkapg2qN9fO5lpGYAn6C92aLpcUnzuEOrneIt1tuaFOJSjQdZBQT/exec";
+            // --- ВАША НОВАЯ ССЫЛКА РАЗВЕРТЫВАНИЯ УСПЕШНО ИНТЕГРИРОВАНА ---
+            var googleScriptUrl = "https://script.google.com/macros/s/AKfycbxwX2vDIt3Dcc1yaq_aIXV7YxyyoeahN3yjA_vs1KU10fsJmXJX49FcynaI6E5Enlir/exec";
 
             const payload = {
+                testType: window.currentTestModeName || 'Площадные ориентиры',
                 fio: localStorage.getItem('la_fio') || 'Не указано',
                 callsign: localStorage.getItem('la_callsign') || 'Нет',
                 score: `${score} из ${totalQuestionsCount}`,
@@ -431,11 +461,17 @@
 
             if (googleScriptUrl === "https://google.com") return;
 
+            const fallbackBody = "testType=" + encodeURIComponent(payload.testType) +
+                                 "&fio=" + encodeURIComponent(payload.fio) + 
+                                 "&callsign=" + encodeURIComponent(payload.callsign) + 
+                                 "&score=" + encodeURIComponent(payload.score) + 
+                                 "&time=" + encodeURIComponent(payload.time);
+
             fetch(googleScriptUrl, {
                 method: "POST",
                 mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: fallbackBody
             }).catch(e => console.log(e));
         }
 
@@ -448,4 +484,3 @@
         initTheme();
     </script>
 </body>
-</html>
