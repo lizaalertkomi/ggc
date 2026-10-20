@@ -235,13 +235,13 @@
             "Растительность лишайниковая (ягель и др.)", "Заросли колючего кустарника"
         ];
 
-        // Добавлен строгий перечень линейных знаков из вашего ТЗ
+        // База линейных знаков строго из вашего текстового ТЗ
         const linearDatabase = [
             "Пересохшее русло реки или ручья", "Обрыв земляной", "Горизонталь",
             "Горизонталь (вариация)", "Обрыв скалистый", "Железная дорога трёхпутная электрифицированная",
             "Железная дорога двухпутная", "Железная дорога однопутная", "Линия электропередач на металлических или железобетонных столбах",
-            "Линия электропередач на деревянных опорах", "Газопровод наземный", "Линия связи (телефон, teleграф, радиотрансляция)",
-            "Граница государственного заповедника", "Кирпичная стена или металлическая ограда", "Пересыхающий ручей",
+            "Линия электропередач на деревянных опорах", "Газопровод наземный", "Линия связи (телефон, телеграф, радиотрансляция)",
+            "Граница государственного заповедника", "Кирпичная стена или metalлическая ограда", "Пересыхающий ручей",
             "Ручей", "Река", "Сухой канал", "Река с обрывистым берегом", "Дорога полевая или лесная",
             "Тропа", "Дорога грунтовая", "Дорога грунтовая улучшенная", "Шоссе",
             "Усовершенствованное шоссе", "Автомагистраль", "Фуникулёр", "Дорога с деревянным покрытием",
@@ -324,7 +324,7 @@
                 activeDb = areaDatabase;
             } else if (type === 'linear') {
                 window.currentTestModeName = "Линейные ориентиры";
-                window.currentImgFolder = "line"; // Путь к картинкам из вашего ТЗ
+                window.currentImgFolder = "line";
                 activeDb = linearDatabase;
             } else {
                 alert('Этот режим находится в разработке.');
@@ -332,7 +332,7 @@
             }
 
             document.getElementById('test-category-title').textContent = window.currentTestModeName;
-            window.currentActiveTestDb = activeDb; // Фиксируем текущую базу для подбора ложных кнопок
+            window.currentActiveTestDb = activeDb; 
 
             let list = [];
             activeDb.forEach(name => list.push({ name: name.trim() }));
@@ -460,13 +460,14 @@
             document.getElementById('result-time-value').textContent = `Ваше время: ${timeString}`;
             
             let comment = ""; var percent = (score / totalQuestionsCount) * 100;
-            if (score === totalQuestionsCount) comment = "Пучечка наша! Карты ГГЦ изучены на высоком уровне. Иди на ПСР :)";
+            if (score === totalQuestionsCount) comment = "Отличный результат! Карты ГГЦ изучены на высоком уровне.";
             else if (percent >= 80) comment = "Хороший результат! Но есть незначительные ошибки.";
             else if (percent >= 50) comment = "Удовлетворительно. Рекомендуется повторить условные знаки ГГЦ.";
             else comment = "Нужно потренироваться. Пройдите полный марафон ещё раз!";
             document.getElementById('result-comment').textContent = comment;
 
-            var googleScriptUrl = "https://google.com";
+            // Ваша актуальная ссылка развертывания веб-приложения макроса Google Таблиц
+            var googleScriptUrl = "https://script.google.com/macros/s/AKfycbxwX2vDIt3Dcc1yaq_aIXV7YxyyoeahN3yjA_vs1KU10fsJmXJX49FcynaI6E5Enlir/exec";
 
             const payload = {
                 testType: window.currentTestModeName || 'Площадные ориентиры',
@@ -489,12 +490,14 @@
                 mode: "no-cors",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 body: fallbackBody
-            }).catch(e => console.log(e));
+            })
+            .then(() => console.log("Отправлено!"))
+            .catch(e => console.log(e));
         }
 
         function backToMenu() {
             const savedFio = localStorage.getItem('la_fio');
-            const savedCallsign = localStorage.getItem('la_callsign');
+const savedCallsign = localStorage.getItem('la_callsign');
 showMenu(savedFio, savedCallsign);
 }
 initTheme();
