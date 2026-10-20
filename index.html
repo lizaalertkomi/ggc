@@ -36,7 +36,7 @@
             --card-shadow: rgba(0, 0, 0, 0.4);
             --border-color: #444444;
         }
-        * {
+               * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
@@ -74,7 +74,7 @@
 
         .container {
             background-color: var(--card-bg);
-            padding: 30px 20px;
+            padding: 25px 20px;
             border-radius: 12px;
             box-shadow: 0 8px 24px var(--card-shadow);
             width: 100%;
@@ -83,11 +83,11 @@
             border: 1px solid var(--border-color);
         }
 
-        .logo-container { margin-bottom: 20px; }
-        .logo { font-size: 28px; font-weight: 900; letter-spacing: 1px; }
+        .logo-container { margin-bottom: 15px; }
+        .logo { font-size: 26px; font-weight: 900; letter-spacing: 1px; }
         .logo span { color: var(--la-orange); }
-        .region-tag { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-top: 2px; opacity: 0.8; }
-        .subtitle { color: var(--text-muted); font-size: 13px; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+        .region-tag { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-top: 2px; opacity: 0.8; }
+        .subtitle { color: var(--text-muted); font-size: 12px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
 
         .form-group { text-align: left; margin-bottom: 18px; }
         label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 600; }
@@ -95,7 +95,7 @@
         input[type="text"] { width: 100%; padding: 14px; background-color: var(--input-bg); border: 1px solid var(--input-border); border-radius: 8px; color: var(--text-color); font-size: 16px; outline: none; }
         input[type="text"]:focus { border-color: var(--la-orange); box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.2); }
 
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .btn-primary { background-color: var(--la-orange); color: #ffffff; text-transform: uppercase; }
         .btn-primary:hover { background-color: var(--la-orange-hover); }
 
@@ -107,53 +107,55 @@
         .screen { display: none; }
         .screen.active { display: block; }
 
-        .welcome-block { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color); text-align: left; }
+        .welcome-block { margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); text-align: left; }
         .welcome-title { font-size: 18px; font-weight: 700; }
         .user-name { color: var(--la-orange); }
 
         .test-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 14px; font-weight: 600; color: var(--text-muted); gap: 10px; }
         .test-header-left { display: flex; flex-direction: column; text-align: left; gap: 2px; }
         
-        .map-card { background: #eef0f3; width: 100%; height: 180px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid var(--border-color); overflow: hidden; }
-        .map-card img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        /* Адаптивная карточка для изображения карты */
+        .map-card { background: #eef0f3; width: 100%; height: 22vh; min-height: 120px; max-height: 180px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; border: 1px solid var(--border-color); overflow: hidden; }
+        .map-card img { max-width: 100%; max-height: 100%; object-fit: contain; padding: 5px; }
 
-        /* Текстовые ответы (6 вариантов) */
-        .answers-grid { display: flex; flex-direction: column; gap: 6px; margin-bottom: 15px; }
-        .btn-answer { background-color: var(--btn-menu-bg); color: var(--text-color); font-weight: 500; font-size: 14px; padding: 11px 14px; border: 1px solid transparent; border-radius: 8px; cursor: pointer; text-align: left; width: 100%; }
+        /* Текстовые ответы (6 вариантов) с автоматическим переносом длинных названий */
+        .answers-grid { display: flex; flex-direction: column; gap: 6px; margin-bottom: 15px; max-height: 45vh; overflow-y: auto; padding-right: 2px; }
+        .btn-answer { background-color: var(--btn-menu-bg); color: var(--text-color); font-weight: 500; font-size: 13px; padding: 10px 14px; border: 1px solid transparent; border-radius: 8px; cursor: pointer; text-align: left; width: 100%; line-height: 1.3; word-wrap: break-word; white-space: normal; }
         .btn-answer:hover:not(:disabled) { background-color: var(--btn-menu-hover); border-color: var(--text-muted); }
         .btn-answer.correct { background-color: var(--success-color) !important; color: white !important; font-weight: 700; }
         .btn-answer.wrong { background-color: var(--error-color) !important; color: white !important; }
 
-        /* Сетка для усложненного режима (4 картинки) */
-        .images-answers-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px; }
-        .btn-image-variant { background-color: var(--btn-menu-bg); border: 2px solid var(--border-color); border-radius: 8px; padding: 8px; cursor: pointer; height: 110px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        /* Сетка для режима выбора из 4 картинок */
+        .images-answers-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
+        .btn-image-variant { background-color: var(--btn-menu-bg); border: 2px solid var(--border-color); border-radius: 8px; padding: 6px; cursor: pointer; height: 14vh; min-height: 85px; max-height: 115px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .btn-image-variant:hover:not(:disabled) { border-color: var(--la-orange); }
         .btn-image-variant img { max-width: 100%; max-height: 100%; object-fit: contain; }
         .btn-image-variant.correct { border-color: var(--success-color) !important; background-color: rgba(46, 125, 50, 0.1); }
         .btn-image-variant.wrong { border-color: var(--error-color) !important; background-color: rgba(198, 40, 40, 0.1); }
 
-        .result-score { font-size: 36px; font-weight: 900; color: var(--la-orange); margin-top: 15px; margin-bottom: 5px; }
-        .result-time { font-size: 16px; font-weight: 700; color: var(--text-muted); margin-bottom: 20px; }
-        .result-text { font-size: 16px; margin-bottom: 25px; font-weight: 600; }
+        .result-score { font-size: 32px; font-weight: 900; color: var(--la-orange); margin-top: 15px; margin-bottom: 5px; }
+        .result-time { font-size: 15px; font-weight: 700; color: var(--text-muted); margin-bottom: 15px; }
+        .result-text { font-size: 15px; margin-bottom: 20px; font-weight: 600; line-height: 1.4; }
 
-        /* УСИЛЕННАЯ МОБИЛЬНАЯ АДАПТАЦИЯ (ЭКРАНЫ СМАРТФОНОВ) */
+        /* ЭКСТРЕННАЯ НАСТРОЙКА ДЛЯ МАЛЕНЬКИХ ТЕЛЕФОНОВ */
         @media (max-width: 480px) {
-            body { padding: 65px 8px 10px 8px; }
-            .container { padding: 15px 12px; border-radius: 8px; }
-            .logo { font-size: 22px; }
-            .subtitle { margin-bottom: 12px; font-size: 11px; }
-            .logo-container { margin-bottom: 10px; }
-            .welcome-block { margin-bottom: 15px; padding-bottom: 10px; }
-            .welcome-title { font-size: 16px; }
-            .map-card { height: 110px; margin-bottom: 12px; }
-            .answers-grid { gap: 5px; margin-bottom: 12px; }
-            .btn-answer { font-size: 12px; padding: 8px 12px; border-radius: 6px; }
-            .btn-image-variant { height: 85px; padding: 4px; }
-            .images-answers-grid { gap: 8px; margin-bottom: 12px; }
-            .btn { padding: 12px; font-size: 14px; }
-            .theme-toggle-btn { top: 10px; right: 10px; padding: 6px 10px; font-size: 12px; }
-            .result-score { font-size: 28px; }
+            body { padding: 55px 6px 10px 8px; }
+            .container { padding: 15px 10px; border-radius: 8px; }
+            .logo { font-size: 20px; }
+            .subtitle { margin-bottom: 10px; font-size: 10px; letter-spacing: 1px; }
+            .logo-container { margin-bottom: 5px; }
+            .welcome-block { margin-bottom: 12px; padding-bottom: 8px; }
+            .welcome-title { font-size: 15px; }
+            .map-card { height: 16vh; min-height: 100px; margin-bottom: 10px; }
+            .answers-grid { gap: 5px; margin-bottom: 10px; }
+            .btn-answer { font-size: 12px; padding: 8px 10px; border-radius: 6px; }
+            .btn-image-variant { height: 11vh; min-height: 75px; padding: 4px; }
+            .images-answers-grid { gap: 6px; margin-bottom: 10px; }
+            .btn { padding: 11px; font-size: 13px; border-radius: 6px; }
+            .theme-toggle-btn { top: 10px; right: 10px; padding: 5px 10px; font-size: 11px; }
+            .result-score { font-size: 24px; }
         }
+
     </style>
 </head>
 <body>
