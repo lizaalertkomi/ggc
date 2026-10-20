@@ -117,20 +117,12 @@
         .map-card { background: #eef0f3; width: 100%; height: 180px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid var(--border-color); overflow: hidden; }
         .map-card img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-        /* Текстовые ответы (7 вариантов) */
         .answers-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
         .btn-answer { background-color: var(--btn-menu-bg); color: var(--text-color); font-weight: 500; font-size: 14px; padding: 12px 15px; border: 1px solid transparent; border-radius: 8px; cursor: pointer; text-align: left; width: 100%; }
         .btn-answer:hover:not(:disabled) { background-color: var(--btn-menu-hover); border-color: var(--text-muted); }
+
         .btn-answer.correct { background-color: var(--success-color) !important; color: white !important; font-weight: 700; }
         .btn-answer.wrong { background-color: var(--error-color) !important; color: white !important; }
-
-        /* Сетка для усложненного режима (4 картинки) */
-        .images-answers-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px; }
-        .btn-image-variant { background-color: var(--btn-menu-bg); border: 2px solid var(--border-color); border-radius: 8px; padding: 8px; cursor: pointer; height: 110px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .btn-image-variant:hover:not(:disabled) { border-color: var(--la-orange); }
-        .btn-image-variant img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .btn-image-variant.correct { border-color: var(--success-color) !important; background-color: rgba(46, 125, 50, 0.1); }
-        .btn-image-variant.wrong { border-color: var(--error-color) !important; background-color: rgba(198, 40, 40, 0.1); }
 
         .result-score { font-size: 36px; font-weight: 900; color: var(--la-orange); margin-top: 15px; margin-bottom: 5px; }
         .result-time { font-size: 16px; font-weight: 700; color: var(--text-muted); margin-bottom: 20px; }
@@ -140,18 +132,22 @@
         @media (max-width: 480px) {
             body { padding: 65px 8px 10px 8px; }
             .container { padding: 15px 12px; border-radius: 8px; }
+            
             .logo { font-size: 22px; }
             .subtitle { margin-bottom: 15px; font-size: 11px; }
             .logo-container { margin-bottom: 10px; }
+            
             .welcome-block { margin-bottom: 15px; padding-bottom: 10px; }
             .welcome-title { font-size: 16px; }
+            
             .map-card { height: 120px; margin-bottom: 12px; }
+            
             .answers-grid { gap: 6px; margin-bottom: 12px; }
             .btn-answer { font-size: 13px; padding: 10px 12px; border-radius: 6px; }
-            .btn-image-variant { height: 85px; padding: 4px; }
-            .images-answers-grid { gap: 8px; margin-bottom: 12px; }
+            
             .btn { padding: 12px; font-size: 14px; }
             .theme-toggle-btn { top: 10px; right: 10px; padding: 6px 10px; font-size: 12px; }
+            
             .result-score { font-size: 28px; }
         }
     </style>
@@ -200,11 +196,11 @@
             <div class="test-header">
                 <div class="test-header-left">
                     <span id="test-category-title">Режим</span>
-                    <span id="question-counter">Вопрос: 1/50</span>
+                    <span id="question-counter">Вопрос: 1/34</span>
                 </div>
                 <div style="font-size: 16px; font-weight: 700; color: var(--la-orange);" id="timer-display">Время: 00:00</div>
             </div>
-            <div class="map-card" id="map-card">
+            <div class="map-card">
                 <img id="question-image" src="" alt="Условный знак ГГЦ">
             </div>
             <div class="answers-grid" id="answers-container"></div>
@@ -215,72 +211,33 @@
         <div id="result-screen" class="screen">
             <div class="welcome-title">Тест завершен!</div>
             <div class="result-score" id="result-score-value">Вы набрали 0 баллов</div>
-            <div class="result-time" id="result-time-value">Ваше время: 0 минут 0 секунд</div>
+            <div class="result-time" id="result-time-value">Ваше время: 0 мин. 0 сек.</div>
             <div class="result-text" id="result-comment">Отличный результат!</div>
             <button class="btn btn-primary" onclick="backToMenu()">Вернуться в меню</button>
         </div>
     </div>
     <script>
-        const areaDatabase = [
-            // --- ТИП 1: 1 КАРТИНКА, 7 ТЕКСТОВЫХ ВАРИАНТОВ ---
-            { name: "Поверхность моховая", type: "text-answers" },
-            { name: "Поверхности кочковатые", type: "text-answers" },
-            { name: "Редкая жилая застройка", type: "text-answers" },
-            { name: "Поверхности глинистые", type: "text-answers" },
-            { name: "Кустарнички (багульник, черника, вереск и др.)", type: "text-answers" },
-            { name: "Отдельные группы колючих кустарников", type: "text-answers" },
-            { name: "Болото проходимое", type: "text-answers" },
-            { name: "Растительность высокотравная (высотой в метр и более)", type: "text-answers" },
-            { name: "Вырубка", type: "text-answers" },
-            { name: "Щебёночные и каменистые россыпи", type: "text-answers" },
-            { name: "Фруктовые сады", type: "text-answers" },
-            { name: "Лес естественный", type: "text-answers" },
-            { name: "Лес с буреломом", type: "text-answers" },
-            { name: "Ягодники", type: "text-answers" },
-            { name: "Растительность степная (ковыль, типчак и др.)", type: "text-answers" },
-            { name: "Кладбище", type: "text-answers" },
-            { name: "Непроходимое болото", type: "text-answers" },
-            { name: "Земли заболоченные", type: "text-answers" },
-            { name: "Поверхности песчаные", type: "text-answers" },
-            { name: "Горелый и сухостойный лес", type: "text-answers" },
-            { name: "Овраги и промоины", type: "text-answers" },
-            { name: "Редколесье", type: "text-answers" },
-            { name: "Лес высаженный", type: "text-answers" },
-            { name: "Заросли камышовые и тростниковые", type: "text-answers" },
-            { name: "Виноградники", type: "text-answers" },
-            { name: "Промышленные отходы", type: "text-answers" },
-            { name: "Заросли колючего кустарника", type: "text-answers" },
-            { name: "Заросли кустарника", type: "text-answers" },
-            { name: "Плантации технические", type: "text-answers" },
-            { name: "Дюны и грядовые пески", type: "text-answers" },
-            { name: "Торфоразработки", type: "text-answers" },
-            { name: "Поверхности такыровые", type: "text-answers" },
-            { name: "Рисовые поля", type: "text-answers" },
-            { name: "Парки и парковые леса", type: "text-answers" },
-            { name: "Питомники изолированные", type: "text-answers" },
-
-            // --- ТИП 2: ТЕКСТОВОЕ ЗАДАНИЕ, 4 КАРТИНКИ ---
-            { name: "Поверхности бугристые", type: "image-answers" },
-            { name: "Растительность травяная влаголюбивая (осока, пушица и др.)", type: "image-answers" },
-            { name: "Растительность травяная, луговая (разнотравье)", type: "image-answers" },
-            { name: "Отдельные группы кустарников", type: "image-answers" },
-            { name: "Поверхности с валунами", type: "image-answers" },
-            { name: "Растительность лишайниковая (ягель и др.)", type: "image-answers" },
-            { name: "Мари (заболоченные лиственничные редколесья)", type: "image-answers" },
-            { name: "Скалы-останцы плоские", type: "image-answers" },
-            { name: "Поверхности солончаковые непроходимые", type: "image-answers" },
-            { name: "Поверхности солончаковые проходимые", type: "image-answers" },
-            { name: "Заросли саксаула густые", type: "image-answers" },
-            { name: "Заросли стланика", type: "image-answers" },
-            { name: "Болото моховое", type: "image-answers" },
-            { name: "Болото травяное", type: "image-answers" },
-            { name: "Лес карликовый", type: "image-answers" }
+        const areaNames = [
+            "Поверхность моховая", "Поверхности кочковатые", "Редкая жилая застройка",
+            "Поверхности глинистые", "Кустарнички (багульник, черника, вереск и др.)", 
+            "Отдельные группы колючих кустарников", "Болото проходимое", 
+            "Растительность высокотравная (высотой в метр и более)", "Вырубка",
+            "Щебёночные и каменистые россыпи", "Растительность травяная, луговая (разнотравье)",
+            "Фруктовые сады", "Лес естественный", "Лес с буреломом", "Ягодники", 
+            "Поверхности бугристые", "Растительность степная (ковыль, типчак и др.)", 
+            "Растительность травяная влаголюбивая (осока, пушица и др.)", "Кладбище", 
+            "Непроходимое болото", "Отдельные группы кустарников", "Земли заболоченные",
+            "Поверхности песчаные", "Горелый и сухостойный лес", "Овраги и промоины", 
+            "Редколесье", "Лес высаженный", "Заросли камышовые и тростниковые", 
+            "Поверхности с валунами", "Виноградники", "Промышленные отходы", 
+            "Растительность лишайниковая (ягель и др.)", "Заросли колючего кустарника",
+            "Заросли кустарника"
         ];
 
         let currentQuestionsList = [];
         let currentQuestionIndex = 0;
         let score = 0;
-        const totalQuestionsCount = areaDatabase.length; // Автоматически равно 50
+        const totalQuestionsCount = areaNames.length;
 
         let timerSeconds = 0;
         let timerInterval = null;
@@ -329,10 +286,12 @@
             document.getElementById('result-screen').classList.remove('active');
             document.getElementById('menu-screen').classList.add('active');
         }
+               // Функции управления таймером
         function startTimer() {
             clearInterval(timerInterval);
             timerSeconds = 0;
             document.getElementById('timer-display').textContent = "Время: 00:00";
+            
             timerInterval = setInterval(() => {
                 timerSeconds++;
                 const mins = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
@@ -341,15 +300,18 @@
             }, 1000);
         }
 
-        function stopTimer() { clearInterval(timerInterval); }
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
 
         function startTest(type) {
             if (type !== 'area') {
                 alert('Этот режим находится в разработке. Пожалуйста, выберите "Площадные ориентиры"');
                 return;
             }
-            // Полное случайное перемешивание всех 50 элементов базы
-            currentQuestionsList = [...areaDatabase].sort(() => 0.5 - Math.random());
+            document.getElementById('test-category-title').textContent = "Площадные ориентиры";
+            
+            currentQuestionsList = [...areaNames].sort(() => 0.5 - Math.random());
             currentQuestionIndex = 0;
             score = 0;
 
@@ -364,58 +326,30 @@
             document.getElementById('next-btn').style.display = 'none';
             document.getElementById('question-counter').textContent = `Вопрос: ${currentQuestionIndex + 1}/${totalQuestionsCount}`;
             
-            const currentQuestion = currentQuestionsList[currentQuestionIndex];
+            const currentCorrectName = currentQuestionsList[currentQuestionIndex];
+            document.getElementById('question-image').src = `plochad/${currentCorrectName}.png`;
+            
+            let answers = [currentCorrectName];
+            let wrongOptions = areaNames.filter(name => name !== currentCorrectName);
+            wrongOptions.sort(() => 0.5 - Math.random());
+            
+            for (let i = 0; i < 6; i++) { answers.push(wrongOptions[i]); }
+            answers.sort(() => 0.5 - Math.random());
+            
             const container = document.getElementById('answers-container');
             container.innerHTML = '';
-
-            // Режим 1: Обычный (Картинка сверху, 7 кнопок текста снизу)
-            if (currentQuestion.type === "text-answers") {
-                document.getElementById('test-category-title').textContent = "Определите знак по картинке";
-                document.getElementById('map-card').style.display = "flex";
-                document.getElementById('question-image').src = `plochad/${currentQuestion.name}.png`;
-                
-                let answers = [currentQuestion.name];
-                let wrongOptions = areaDatabase.filter(q => q.name !== currentQuestion.name).map(q => q.name);
-                wrongOptions.sort(() => 0.5 - Math.random());
-                for (let i = 0; i < 6; i++) { answers.push(wrongOptions[i]); }
-                answers.sort(() => 0.5 - Math.random());
-                
-                container.className = "answers-grid";
-                answers.forEach(answer => {
-                    const button = document.createElement('button');
-                    button.className = 'btn-answer';
-                    button.textContent = answer;
-                    button.onclick = () => checkAnswer(button, answer, currentQuestion.name, "text");
-                    container.appendChild(button);
-                });
-
-            // Режим 2: Усложненный (Текст задания сверху, 4 картинки-варианта снизу)
-            } else if (currentQuestion.type === "image-answers") {
-                document.getElementById('test-category-title').textContent = `Найдите изображение: "${currentQuestion.name}"`;
-                document.getElementById('map-card').style.display = "none"; // Прячем главное окно
-                
-                let variantNames = [currentQuestion.name];
-                let wrongOptions = areaDatabase.filter(q => q.name !== currentQuestion.name).map(q => q.name);
-                wrongOptions.sort(() => 0.5 - Math.random());
-                for (let i = 0; i < 3; i++) { variantNames.push(wrongOptions[i]); }
-                variantNames.sort(() => 0.5 - Math.random());
-                
-                container.className = "images-answers-grid";
-                variantNames.forEach(vName => {
-                    const button = document.createElement('button');
-                    button.className = 'btn-image-variant';
-                    const img = document.createElement('img');
-                    img.src = `plochad/${vName}.png`;
-                    button.appendChild(img);
-                    button.onclick = () => checkAnswer(button, vName, currentQuestion.name, "image");
-                    container.appendChild(button);
-                });
-            }
+            
+            answers.forEach(answer => {
+                const button = document.createElement('button');
+                button.className = 'btn-answer';
+                button.textContent = answer;
+                button.onclick = () => checkAnswer(button, answer, currentCorrectName);
+                container.appendChild(button);
+            });
         }
 
-        function checkAnswer(selectedButton, selectedAnswer, correctAnswer, mode) {
-            const selector = mode === "text" ? '.btn-answer' : '.btn-image-variant';
-            const buttons = document.querySelectorAll(selector);
+        function checkAnswer(selectedButton, selectedAnswer, correctAnswer) {
+            const buttons = document.querySelectorAll('.btn-answer');
             buttons.forEach(btn => btn.disabled = true);
             
             if (selectedAnswer === correctAnswer) {
@@ -424,24 +358,29 @@
             } else {
                 selectedButton.classList.add('wrong');
                 buttons.forEach(btn => {
-                    if (mode === "text" && btn.textContent === correctAnswer) { btn.classList.add('correct'); }
-                    if (mode === "image" && btn.querySelector('img').src.includes(encodeSpreadsheetCell(correctAnswer))) { btn.classList.add('correct'); }
+                    if (btn.textContent === correctAnswer) { btn.classList.add('correct'); }
                 });
             }
             document.getElementById('next-btn').style.display = 'block';
         }
 
-        function encodeSpreadsheetCell(name) { return encodeURIComponent(name).replace(/'/g, "%27"); }
-
         function nextQuestion() {
             currentQuestionIndex++;
             if (currentQuestionIndex < totalQuestionsCount) { loadQuestion(); } 
-            else { stopTimer(); showResults(); }
+            else { 
+                stopTimer();
+                showResults(); 
+            }
         }
 
         function pluralize(number, one, two, many) {
-            let n = Math.abs(number); n %= 100; if (n >= 5 && n <= 20) return many;
-            n %= 10; if (n === 1) return one; if (n >= 2 && n <= 4) return two; return many;
+            let n = Math.abs(number);
+            n %= 100;
+            if (n >= 5 && n <= 20) { return many; }
+            n %= 10;
+            if (n === 1) { return one; }
+            if (n >= 2 && n <= 4) { return two; }
+            return many;
         }
 
         function showResults() {
@@ -451,24 +390,29 @@
             const scoreText = pluralize(score, 'балл', 'балла', 'баллов');
             document.getElementById('result-score-value').textContent = `Вы набрали ${score} ${scoreText}`;
             
-            const finalMins = Math.floor(timerSeconds / 60); const finalSecs = timerSeconds % 60;
+            const finalMins = Math.floor(timerSeconds / 60);
+            const finalSecs = timerSeconds % 60;
             const minsText = pluralize(finalMins, 'минуту', 'минуты', 'минут');
             const secsText = pluralize(finalSecs, 'секунду', 'секунды', 'секунд');
             
             const timeString = `${finalMins} ${minsText} ${finalSecs} ${secsText}`;
             document.getElementById('result-time-value').textContent = `Ваше время: ${timeString}`;
             
-            let comment = ""; let percent = (score / totalQuestionsCount) * 100;
-            if (score === totalQuestionsCount) comment = "Идеально! Полная победа на дистанции в 50 знаков ГГЦ!";
+            let comment = "";
+            let percent = (score / totalQuestionsCount) * 100;
+
+            if (score === totalQuestionsCount) comment = "Молодец! Можешь идти на ПСР";
             else if (percent >= 80) comment = "Отличный результат! Карты ГГЦ изучены на высоком уровне.";
             else if (percent >= 50) comment = "Хорошо, но есть над чем поработать.";
-            else comment = "Нужно подтянуть теорию. Пройдите полный марафон ещё раз!";
+            else comment = "Нужно подтянуть теорию. Попробуйте пройти тест ещё раз!";
+            
             document.getElementById('result-comment').textContent = comment;
 
             // --- ШАГ 1. ПРОВЕРЬТЕ АДРЕС СКРИПТА В ФАЙЛЕ INDEX.HTML ---
-            // Вставьте вашу ссылку развертывания макроса Google (/exec) между кавычек:
+            // Вставьте вашу длинную веб-ссылку развертывания макроса строго между кавычек:
             var googleScriptUrl = "https://script.google.com/macros/s/AKfycbzMTu4luH5HS48ECkapg2qN9fO5lpGYAn6C92aLpcUnzuEOrneIt1tuaFOJSjQdZBQT/exec";
 
+            // Сбор данных для передачи макросу
             const payload = {
                 fio: localStorage.getItem('la_fio') || 'Не указано',
                 callsign: localStorage.getItem('la_callsign') || 'Нет',
@@ -476,14 +420,21 @@
                 time: timeString
             };
 
-            if (googleScriptUrl === "https://google.com") return;
+            // Если адрес макроса тестовый — блокируем отправку в никуда
+            if (googleScriptUrl === "https://google.com") {
+                console.log("Данные не отправлены: настройте googleScriptUrl");
+                return;
+            }
 
+            // Фоновая отправка на макрос Google через POST-запрос
             fetch(googleScriptUrl, {
                 method: "POST",
                 mode: "no-cors",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
-            }).catch(e => console.log(e));
+            })
+            .then(() => console.log("Статистика успешно улетела в Google Таблицу!"))
+            .catch(error => console.log("Ошибка отправки макроса:", error));
         }
 
         function backToMenu() {
