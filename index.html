@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тренажер ГГЦ — ЛизаАлерт Республика Коми</title>
+    <title>Тренажер ГГЦ — ЛизаАлерт</title>
     <style>
-        /* Переменные для СВЕТЛОЙ темы */
+        /* Базовые цвета для СВЕТЛОЙ темы */
         :root {
             --bg-color: #f4f5f7;
             --card-bg: #ffffff;
@@ -19,9 +19,11 @@
             --btn-menu-hover: #dddddd;
             --card-shadow: rgba(0, 0, 0, 0.08);
             --border-color: #e0e0e0;
+            --success-color: #2e7d32;
+            --error-color: #c62828;
         }
 
-        /* Переменные для ТЕМНОЙ темы */
+        /* Базовые цвета для ТЕМНОЙ темы */
         [data-theme="dark"] {
             --bg-color: #1a1a1a;
             --card-bg: #2d2d2d;
@@ -34,13 +36,12 @@
             --card-shadow: rgba(0, 0, 0, 0.4);
             --border-color: #444444;
         }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Roboto, sans-serif;
-            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
         }
 
         body {
@@ -55,7 +56,6 @@
             position: relative;
         }
 
-        /* Кнопка смены темы */
         .theme-toggle-btn {
             position: absolute;
             top: 20px;
@@ -68,250 +68,101 @@
             cursor: pointer;
             font-size: 14px;
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
             box-shadow: 0 4px 12px var(--card-shadow);
             z-index: 10;
-            user-select: none;
         }
 
-        .theme-toggle-btn:hover {
-            border-color: var(--la-orange);
-        }
-
-        /* Карточка приложения */
         .container {
             background-color: var(--card-bg);
-            padding: 35px 20px;
+            padding: 30px 20px;
             border-radius: 12px;
             box-shadow: 0 8px 24px var(--card-shadow);
             width: 100%;
-            max-width: 450px;
+            max-width: 550px;
             text-align: center;
             border: 1px solid var(--border-color);
         }
 
-        .logo-container {
-            margin-bottom: 25px;
-        }
+        .logo-container { margin-bottom: 20px; }
+        .logo { font-size: 28px; font-weight: 900; letter-spacing: 1px; }
+        .logo span { color: var(--la-orange); }
+        .region-tag { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-top: 2px; opacity: 0.8; }
+        .subtitle { color: var(--text-muted); font-size: 13px; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
 
-        .logo {
-            font-size: 32px;
-            font-weight: 900;
-            letter-spacing: 0.5px;
-            line-height: 1.1;
-            text-transform: uppercase;
-        }
+        .form-group { text-align: left; margin-bottom: 18px; }
+        label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 600; }
+        label span { color: var(--la-orange); }
+        input[type="text"] { width: 100%; padding: 14px; background-color: var(--input-bg); border: 1px solid var(--input-border); border-radius: 8px; color: var(--text-color); font-size: 16px; outline: none; }
+        input[type="text"]:focus { border-color: var(--la-orange); box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.2); }
 
-        .logo .dark-text {
-            color: #1d2831;
-        }
-        [data-theme="dark"] .logo .dark-text {
-            color: #ffffff;
-        }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-primary { background-color: var(--la-orange); color: #ffffff; text-transform: uppercase; }
+        .btn-primary:hover { background-color: var(--la-orange-hover); }
 
-        .logo .orange-text {
-            color: var(--la-orange);
-        }
+        .btn-menu { background-color: var(--btn-menu-bg); color: var(--text-color); margin-bottom: 12px; justify-content: flex-start; padding-left: 20px; font-weight: 600; }
+        .btn-menu:hover { background-color: var(--btn-menu-hover); border-left: 4px solid var(--la-orange); padding-left: 16px; }
+        .btn-total { background-color: transparent; border: 2px solid var(--la-orange); color: var(--la-orange); margin-top: 15px; text-transform: uppercase; }
+        .btn-total:hover { background-color: var(--la-orange); color: #ffffff; }
 
-        .region-tag {
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-top: 5px;
-        }
+        .screen { display: none; }
+        .screen.active { display: block; }
 
-        .subtitle {
-            color: var(--la-orange);
-            font-size: 14px;
-            margin-bottom: 25px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-weight: 700;
-        }
+        .welcome-block { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color); text-align: left; }
+        .welcome-title { font-size: 18px; font-weight: 700; }
+        .user-name { color: var(--la-orange); }
 
-        .form-group {
-            text-align: left;
-            margin-bottom: 18px;
-        }
+        .test-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 14px; font-weight: 600; color: var(--text-muted); }
+        .map-card { background: #eef0f3; width: 100%; height: 180px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 25px; border: 1px solid var(--border-color); overflow: hidden; }
+        .map-card img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 14px;
-            font-weight: 600;
-        }
+        .answers-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+        .btn-answer { background-color: var(--btn-menu-bg); color: var(--text-color); font-weight: 500; font-size: 14px; padding: 12px 15px; border: 1px solid transparent; border-radius: 8px; cursor: pointer; text-align: left; width: 100%; }
+        .btn-answer:hover:not(:disabled) { background-color: var(--btn-menu-hover); border-color: var(--text-muted); }
 
-        label span {
-            color: var(--la-orange);
-        }
+        .btn-answer.correct { background-color: var(--success-color) !important; color: white !important; font-weight: 700; }
+        .btn-answer.wrong { background-color: var(--error-color) !important; color: white !important; }
 
-        input[type="text"] {
-            width: 100%;
-            padding: 14px;
-            background-color: var(--input-bg);
-            border: 1px solid var(--input-border);
-            border-radius: 8px;
-            color: var(--text-color);
-            font-size: 16px;
-            outline: none;
-        }
+        .result-score { font-size: 42px; font-weight: 900; color: var(--la-orange); margin: 20px 0; }
+        .result-text { font-size: 18px; margin-bottom: 30px; font-weight: 600; }
 
-        input[type="text"]:focus {
-            border-color: var(--la-orange);
-            box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.2);
-        }
-
-        /* Кнопки */
-        .btn {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-primary {
-            background-color: var(--la-orange);
-            color: #ffffff;
-            margin-top: 10px;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--la-orange-hover);
-        }
-
-        .btn-menu {
-            background-color: var(--btn-menu-bg);
-            color: var(--text-color);
-            margin-bottom: 12px;
-            justify-content: flex-start;
-            padding-left: 20px;
-            text-transform: none;
-            font-weight: 600;
-        }
-
-        .btn-menu:hover {
-            background-color: var(--btn-menu-hover);
-            border-left: 4px solid var(--la-orange);
-            padding-left: 16px;
-        }
-
-        .btn-total {
-            background-color: transparent;
-            border: 2px solid var(--la-orange);
-            color: var(--la-orange);
-            margin-top: 15px;
-            text-transform: uppercase;
-        }
-
-        .btn-total:hover {
-            background-color: var(--la-orange);
-            color: #ffffff;
-        }
-
-        /* Переключение видимости экранов */
-        .screen {
-            display: none;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        /* Приветствие */
-        .welcome-block {
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-            text-align: left;
-        }
-
-        .welcome-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .welcome-subtitle {
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-
-        .user-name {
-            color: var(--la-orange);
-        }
-
-        /* Мобильная адаптация */
         @media (max-width: 480px) {
-            body {
-                padding: 75px 12px 20px 12px;
-            }
-            
-            .container {
-                padding: 25px 15px;
-                border-radius: 10px;
-            }
-
-            .logo {
-                font-size: 26px;
-            }
-
-            .theme-toggle-btn {
-                top: 15px;
-                right: 15px;
-                padding: 8px 12px;
-                font-size: 13px;
-            }
+            body { padding: 75px 12px 20px 12px; }
+            .container { padding: 25px 15px; }
+            .logo { font-size: 24px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Переключатель темы -->
     <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-btn">
         <span id="theme-icon">☀️</span> <span id="theme-text">Светлая тема</span>
     </button>
 
     <div class="container">
         <div class="logo-container">
-            <div class="logo"><span class="dark-text">ЛИЗА</span><span class="orange-text">АЛЕРТ</span></div>
+            <div class="logo">ЛИЗА<span>АЛЕРТ</span></div>
             <div class="region-tag">Республика Коми</div>
         </div>
-        <div class="subtitle">Тенажер топокарт ГГЦ</div>
+        <div class="subtitle">Тренажер топокарт ГГЦ</div>
 
         <!-- ЭКРАН 1: РЕГИСТРАЦИЯ -->
         <div id="registration-screen" class="screen active">
-            <form id="reg-form" onsubmit="handleRegistration(event)">
-                <div class="form-group">
-                    <label for="fio">ФИО <span>*</span></label>
-                    <input type="text" id="fio" required placeholder="Иванов Иван Иванович" autocomplete="name">
-                </div>
-                <div class="form-group">
-                    <label for="callsign">Позывной (при наличии)</label>
-                    <input type="text" id="callsign" placeholder="Каспер" autocomplete="off">
-                </div>
-                <button type="submit" class="btn btn-primary">Начать</button>
-            </form>
+            <div class="form-group">
+                <label for="fio">ФИО <span>*</span></label>
+                <input type="text" id="fio" placeholder="Иванов Иван Иванович">
+            </div>
+            <div class="form-group">
+                <label for="callsign">Позывной (при наличии)</label>
+                <input type="text" id="callsign" placeholder="Каспер">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="validateAndStart()">Начать</button>
         </div>
 
         <!-- ЭКРАН 2: ГЛАВНОЕ МЕНЮ -->
         <div id="menu-screen" class="screen">
             <div class="welcome-block">
                 <div class="welcome-title">Приветствуем, <span id="display-name" class="user-name"></span>!</div>
-                <div class="welcome-subtitle">Выберите категорию для тренировки:</div>
             </div>
-            
             <div class="menu-buttons">
                 <button class="btn btn-menu" onclick="startTest('area')">■ &nbsp; Площадные ориентиры</button>
                 <button class="btn btn-menu" onclick="startTest('linear')">⚡ &nbsp; Линейные ориентиры</button>
@@ -319,65 +170,185 @@
                 <button class="btn btn-primary btn-total" onclick="startTest('all')">🔥 &nbsp; Общий тест</button>
             </div>
         </div>
-    </div>
 
+        <!-- ЭКРАН 3: ТЕСТИРОВАНИЕ -->
+        <div id="test-screen" class="screen">
+            <div class="test-header">
+                <span id="test-category-title">Режим</span>
+                <span id="question-counter">Вопрос: 1/34</span>
+            </div>
+            <div class="map-card">
+                <img id="question-image" src="" alt="Условный знак ГГЦ">
+            </div>
+            <div class="answers-grid" id="answers-container"></div>
+            <button id="next-btn" class="btn btn-primary" style="display: none;" onclick="nextQuestion()">Следующий вопрос</button>
+        </div>
+
+        <!-- ЭКРАН 4: РЕЗУЛЬТАТЫ -->
+        <div id="result-screen" class="screen">
+            <div class="welcome-title">Тест завершен!</div>
+            <div class="result-score" id="result-score-value">Вы набрали 0 баллов</div>
+            <div class="result-text" id="result-comment">Отличный результат!</div>
+            <button class="btn btn-primary" onclick="backToMenu()">В главное меню</button>
+        </div>
+    </div>
     <script>
-        // Инициализация темы при первой загрузке
+        const areaNames = [
+            "Поверхность моховая", "Поверхности кочковатые", "Редкая жилая застройка",
+            "Поверхности глинистые", "Кустарнички (багульник, черника, вереск и др.)", 
+            "Отдельные группы колючих кустарников", "Болото проходимое", 
+            "Растительность высокотравная (высотой в метр и более)", "Вырубка",
+            "Щебёночные и каменистые россыпи", "Растительность травяная, луговая (разнотравье)",
+            "Фруктовые сады", "Лес естественный", "Лес с буреломом", "Ягодники", 
+            "Поверхности бугристые", "Растительность степная (ковыль, типчак и др.)", 
+            "Растительность травяная влаголюбивая (осока, пушица и др.)", "Кладбище", 
+            "Непроходимое болото", "Отдельные группы кустарников", "Земли заболоченные",
+            "Поверхности песчаные", "Горелый и сухостойный лес", "Овраги и промоины", 
+            "Редколесье", "Лес высаженный", "Заросли камышовые и тростниковые", 
+            "Поверхности с валунами", "Виноградники", "Промышленные отходы", 
+            "Растительность лишайниковая (ягель и др.)", "Заросли колючего кустарника",
+            "Заросли кустарника"
+        ];
+
+        let currentQuestionsList = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        const totalQuestionsCount = areaNames.length; // Автоматически пересчитывает лимит на 34
         function initTheme() {
             const savedTheme = localStorage.getItem('la_theme') || 'light';
             document.documentElement.setAttribute('data-theme', savedTheme);
             updateThemeButton(savedTheme);
         }
 
-        // Клик по кнопке смены темы
         function toggleTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('la_theme', newTheme);
             updateThemeButton(newTheme);
         }
 
-        // Обновление иконки и текста кнопки
         function updateThemeButton(theme) {
             const icon = document.getElementById('theme-icon');
             const text = document.getElementById('theme-text');
-            if (theme === 'dark') {
-                icon.textContent = '🌙';
-                text.textContent = 'Темная тема';
-            } else {
-                icon.textContent = '☀️';
-                text.textContent = 'Светлая тема';
+            if (theme === 'dark') { icon.textContent = '🌙'; text.textContent = 'Темная тема'; }
+            else { icon.textContent = '☀️'; text.textContent = 'Светлая тема'; }
+        }
+
+        function validateAndStart() {
+            const fioInput = document.getElementById('fio').value.trim();
+            const callsignInput = document.getElementById('callsign').value.trim();
+
+            if (fioInput === "") {
+                alert("Пожалуйста, обязательно заполните поле ФИО!");
+                document.getElementById('fio').focus();
+                return;
             }
+
+            localStorage.setItem('la_fio', fioInput);
+            localStorage.setItem('la_callsign', callsignInput);
+            showMenu(fioInput, callsignInput);
         }
 
-        // Отправка формы регистрации
-        function handleRegistration(event) {
-            event.preventDefault();
-            const fio = document.getElementById('fio').value.trim();
-            const callsign = document.getElementById('callsign').value.trim();
-            
-            localStorage.setItem('la_fio', fio);
-            localStorage.setItem('la_callsign', callsign);
-            
-            showMenu(fio, callsign);
-        }
-
-        // Переключение на экран меню
         function showMenu(fio, callsign) {
             const displayName = callsign ? `${fio} (${callsign})` : fio;
             document.getElementById('display-name').textContent = displayName;
             
             document.getElementById('registration-screen').classList.remove('active');
+            document.getElementById('test-screen').classList.remove('active');
+            document.getElementById('result-screen').classList.remove('active');
             document.getElementById('menu-screen').classList.add('active');
         }
-
         function startTest(type) {
-            alert('Выбран режим тестирования: ' + type);
+            if (type !== 'area') {
+                alert('Этот режим находится в разработке. Пожалуйста, выберите "Площадные ориентиры"');
+                return;
+            }
+            document.getElementById('test-category-title').textContent = "Площадные ориентиры";
+            
+            // Запуск полного марафона: перемешиваем случайным образом все 34 знака из базы
+            currentQuestionsList = [...areaNames].sort(() => 0.5 - Math.random());
+            currentQuestionIndex = 0;
+            score = 0;
+
+            document.getElementById('menu-screen').classList.remove('active');
+            document.getElementById('test-screen').classList.add('active');
+            loadQuestion();
         }
 
-        // Запуск при старте страницы
+        function loadQuestion() {
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('question-counter').textContent = `Вопрос: ${currentQuestionIndex + 1}/${totalQuestionsCount}`;
+            
+            const currentCorrectName = currentQuestionsList[currentQuestionIndex];
+            document.getElementById('question-image').src = `plochad/${currentCorrectName}.png`;
+            
+            let answers = [currentCorrectName];
+            let wrongOptions = areaNames.filter(name => name !== currentCorrectName);
+            wrongOptions.sort(() => 0.5 - Math.random());
+            
+            // Набираем ложные варианты (итого 7 кнопок на экране)
+            for (let i = 0; i < 6; i++) { answers.push(wrongOptions[i]); }
+            answers.sort(() => 0.5 - Math.random());
+            
+            const container = document.getElementById('answers-container');
+            container.innerHTML = '';
+            
+            answers.forEach(answer => {
+                const button = document.createElement('button');
+                button.className = 'btn-answer';
+                button.textContent = answer;
+                button.onclick = () => checkAnswer(button, answer, currentCorrectName);
+                container.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selectedButton, selectedAnswer, correctAnswer) {
+            const buttons = document.querySelectorAll('.btn-answer');
+            buttons.forEach(btn => btn.disabled = true);
+            
+            if (selectedAnswer === correctAnswer) {
+                selectedButton.classList.add('correct');
+                score++; // Каждая позиция приносит 1 балл
+            } else {
+                selectedButton.classList.add('wrong');
+                buttons.forEach(btn => {
+                    if (btn.textContent === correctAnswer) { btn.classList.add('correct'); }
+                });
+            }
+            document.getElementById('next-btn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < totalQuestionsCount) { loadQuestion(); } 
+            else { showResults(); }
+        }
+
+        function showResults() {
+            document.getElementById('test-screen').classList.remove('active');
+            document.getElementById('result-screen').classList.add('active');
+            
+            // Вывод строки результатов строго по вашему техническому заданию
+            document.getElementById('result-score-value').textContent = `Вы набрали ${score} баллов`;
+            
+            let comment = "";
+            let percent = (score / totalQuestionsCount) * 100;
+
+            if (score === totalQuestionsCount) comment = "Идеально! Полная победа, ни одной ошибки на дистанции в 34 знака!";
+            else if (percent >= 80) comment = "Отличный результат! Карты ГГЦ изучены на высоком уровне.";
+            else if (percent >= 50) comment = "Хорошо, но есть над чем поработать.";
+            else comment = "Нужно подтянуть теорию. Пройдите полный марафон ещё раз!";
+            
+            document.getElementById('result-comment').textContent = comment;
+        }
+
+        function backToMenu() {
+            const savedFio = localStorage.getItem('la_fio');
+            const savedCallsign = localStorage.getItem('la_callsign');
+            showMenu(savedFio, savedCallsign);
+        }
+
         initTheme();
     </script>
 </body>
