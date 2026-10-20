@@ -36,7 +36,7 @@
             --card-shadow: rgba(0, 0, 0, 0.4);
             --border-color: #444444;
         }
-               * {
+        * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
@@ -114,18 +114,15 @@
         .test-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 14px; font-weight: 600; color: var(--text-muted); gap: 10px; }
         .test-header-left { display: flex; flex-direction: column; text-align: left; gap: 2px; }
         
-        /* Адаптивная карточка для изображения карты */
         .map-card { background: #eef0f3; width: 100%; height: 22vh; min-height: 120px; max-height: 180px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; border: 1px solid var(--border-color); overflow: hidden; }
         .map-card img { max-width: 100%; max-height: 100%; object-fit: contain; padding: 5px; }
 
-        /* Текстовые ответы (6 вариантов) с автоматическим переносом длинных названий */
         .answers-grid { display: flex; flex-direction: column; gap: 6px; margin-bottom: 15px; max-height: 45vh; overflow-y: auto; padding-right: 2px; }
         .btn-answer { background-color: var(--btn-menu-bg); color: var(--text-color); font-weight: 500; font-size: 13px; padding: 10px 14px; border: 1px solid transparent; border-radius: 8px; cursor: pointer; text-align: left; width: 100%; line-height: 1.3; word-wrap: break-word; white-space: normal; }
         .btn-answer:hover:not(:disabled) { background-color: var(--btn-menu-hover); border-color: var(--text-muted); }
         .btn-answer.correct { background-color: var(--success-color) !important; color: white !important; font-weight: 700; }
         .btn-answer.wrong { background-color: var(--error-color) !important; color: white !important; }
 
-        /* Сетка для режима выбора из 4 картинок */
         .images-answers-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
         .btn-image-variant { background-color: var(--btn-menu-bg); border: 2px solid var(--border-color); border-radius: 8px; padding: 6px; cursor: pointer; height: 14vh; min-height: 85px; max-height: 115px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .btn-image-variant:hover:not(:disabled) { border-color: var(--la-orange); }
@@ -137,7 +134,6 @@
         .result-time { font-size: 15px; font-weight: 700; color: var(--text-muted); margin-bottom: 15px; }
         .result-text { font-size: 15px; margin-bottom: 20px; font-weight: 600; line-height: 1.4; }
 
-        /* ЭКСТРЕННАЯ НАСТРОЙКА ДЛЯ МАЛЕНЬКИХ ТЕЛЕФОНОВ */
         @media (max-width: 480px) {
             body { padding: 55px 6px 10px 8px; }
             .container { padding: 15px 10px; border-radius: 8px; }
@@ -155,7 +151,6 @@
             .theme-toggle-btn { top: 10px; right: 10px; padding: 5px 10px; font-size: 11px; }
             .result-score { font-size: 24px; }
         }
-
     </style>
 </head>
 <body>
@@ -223,6 +218,7 @@
         </div>
     </div>
     <script>
+        // База площадных знаков
         const areaDatabase = [
             "Поверхность моховая", "Поверхности кочковатые", "Редкая жилая застройка",
             "Поверхности глинистые", "Кустарнички (багульник, черника, вереск и др.)", 
@@ -237,6 +233,20 @@
             "Редколесье", "Лес высаженный", "Заросли камышовые и тростниковые", 
             "Поверхности с валунами", "Виноградники", "Промышленные отходы", 
             "Растительность лишайниковая (ягель и др.)", "Заросли колючего кустарника"
+        ];
+
+        // Добавлен строгий перечень линейных знаков из вашего ТЗ
+        const linearDatabase = [
+            "Пересохшее русло реки или ручья", "Обрыв земляной", "Горизонталь",
+            "Горизонталь (вариация)", "Обрыв скалистый", "Железная дорога трёхпутная электрифицированная",
+            "Железная дорога двухпутная", "Железная дорога однопутная", "Линия электропередач на металлических или железобетонных столбах",
+            "Линия электропередач на деревянных опорах", "Газопровод наземный", "Линия связи (телефон, teleграф, радиотрансляция)",
+            "Граница государственного заповедника", "Кирпичная стена или металлическая ограда", "Пересыхающий ручей",
+            "Ручей", "Река", "Сухой канал", "Река с обрывистым берегом", "Дорога полевая или лесная",
+            "Тропа", "Дорога грунтовая", "Дорога грунтовая улучшенная", "Шоссе",
+            "Усовершенствованное шоссе", "Автомагистраль", "Фуникулёр", "Дорога с деревянным покрытием",
+            "Железная дорога на насыпи", "Дорога проезжая только в холодное время года", "Железная дорога разобранная",
+            "Просеки в лесу"
         ];
 
         let currentQuestionsList = [];
@@ -306,23 +316,29 @@
         function stopTimer() { clearInterval(timerInterval); }
 
         function startTest(type) {
-            // Назначаем имя теста для распределения по вкладкам
-            if (type === 'area') window.currentTestModeName = "Площадные ориентиры";
-            else if (type === 'linear') window.currentTestModeName = "Линейные ориентиры";
-            else if (type === 'point') window.currentTestModeName = "Точечные ориентиры";
-            else window.currentTestModeName = "Общий тест";
-
-            if (type !== 'area') {
-                alert('Этот режим находится в разработке. Пожалуйста, выберите "Площадные ориентиры"');
+            let activeDb = [];
+            
+            if (type === 'area') {
+                window.currentTestModeName = "Площадные ориентиры";
+                window.currentImgFolder = "plochad";
+                activeDb = areaDatabase;
+            } else if (type === 'linear') {
+                window.currentTestModeName = "Линейные ориентиры";
+                window.currentImgFolder = "line"; // Путь к картинкам из вашего ТЗ
+                activeDb = linearDatabase;
+            } else {
+                alert('Этот режим находится в разработке.');
                 return;
             }
-            document.getElementById('test-category-title').textContent = "Площадные ориентиры";
-            
+
+            document.getElementById('test-category-title').textContent = window.currentTestModeName;
+            window.currentActiveTestDb = activeDb; // Фиксируем текущую базу для подбора ложных кнопок
+
             let list = [];
-            areaDatabase.forEach(name => list.push({ name: name.trim() }));
+            activeDb.forEach(name => list.push({ name: name.trim() }));
             
             while(list.length < totalQuestionsCount) {
-                let randomName = areaDatabase[Math.floor(Math.random() * areaDatabase.length)];
+                let randomName = activeDb[Math.floor(Math.random() * activeDb.length)];
                 list.push({ name: randomName.trim() });
             }
             
@@ -351,13 +367,13 @@
             const container = document.getElementById('answers-container');
             container.innerHTML = '';
 
-            const allAllowedNames = areaDatabase.map(q => q.trim());
+            const allAllowedNames = window.currentActiveTestDb.map(q => q.trim());
 
-            // Режим 1: 1 Картинка + 6 Кнопок текста (настроено строго по вашему ТЗ)
+            // Режим 1: 1 Картинка + 6 Кнопок текста
             if (currentQuestion.type === "text-answers") {
                 document.getElementById('test-category-title').textContent = "Определите знак по картинке";
                 document.getElementById('map-card').style.display = "flex";
-                document.getElementById('question-image').src = `plochad/${currentQuestion.name}.png`;
+                document.getElementById('question-image').src = `${window.currentImgFolder}/${currentQuestion.name}.png`;
                 
                 let answers = [currentQuestion.name];
                 let wrongOptions = allAllowedNames.filter(name => name !== currentQuestion.name);
@@ -390,7 +406,7 @@
                     const button = document.createElement('button');
                     button.className = 'btn-image-variant';
                     const img = document.createElement('img');
-                    img.src = `plochad/${vName}.png`;
+                    img.src = `${window.currentImgFolder}/${vName}.png`;
                     button.appendChild(img);
                     button.onclick = () => checkAnswer(button, vName, currentQuestion.name, "image");
                     container.appendChild(button);
@@ -447,11 +463,10 @@
             if (score === totalQuestionsCount) comment = "Отличный результат! Карты ГГЦ изучены на высоком уровне.";
             else if (percent >= 80) comment = "Хороший результат! Но есть незначительные ошибки.";
             else if (percent >= 50) comment = "Удовлетворительно. Рекомендуется повторить условные знаки ГГЦ.";
-            else comment = "Надо потренироваться. Пройдите тест ещё раз!";
+            else comment = "Нужно потренироваться. Пройдите полный марафон ещё раз!";
             document.getElementById('result-comment').textContent = comment;
 
-            // --- ВАША НОВАЯ ССЫЛКА РАЗВЕРТЫВАНИЯ УСПЕШНО ИНТЕГРИРОВАНА ---
-            var googleScriptUrl = "https://script.google.com/macros/s/AKfycbxwX2vDIt3Dcc1yaq_aIXV7YxyyoeahN3yjA_vs1KU10fsJmXJX49FcynaI6E5Enlir/exec";
+            var googleScriptUrl = "https://google.com";
 
             const payload = {
                 testType: window.currentTestModeName || 'Площадные ориентиры',
@@ -480,9 +495,6 @@
         function backToMenu() {
             const savedFio = localStorage.getItem('la_fio');
             const savedCallsign = localStorage.getItem('la_callsign');
-            showMenu(savedFio, savedCallsign);
-        }
-
-        initTheme();
-    </script>
-</body>
+showMenu(savedFio, savedCallsign);
+}
+initTheme();
