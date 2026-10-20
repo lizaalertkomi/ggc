@@ -303,7 +303,7 @@
             document.getElementById('result-screen').classList.remove('active');
             document.getElementById('menu-screen').classList.add('active');
         }
-        function startTimer() {
+              function startTimer() {
             clearInterval(timerInterval);
             timerSeconds = 0;
             document.getElementById('timer-display').textContent = "Время: 00:00";
@@ -360,6 +360,11 @@
             startTimer();
             loadQuestion();
         }
+        // Вспомогательная функция, которая на лету прячет приписку "(вариация)" для игрока
+        function cleanNameForUser(name) {
+            return name.replace(/\s*\(вариация\)/gi, "").trim();
+        }
+
         function loadQuestion() {
             document.getElementById('next-btn').style.display = 'none';
             document.getElementById('question-counter').textContent = `Вопрос: ${currentQuestionIndex + 1}/${totalQuestionsCount}`;
@@ -369,47 +374,64 @@
             container.innerHTML = '';
 
             const allAllowedNames = window.currentActiveTestDb.map(q => q.trim());
+            const cleanCorrectName = cleanNameForUser(currentQuestion.name);
 
-            // Режим 1: 1 Картинка + 6 Кнопок текста (настроено строго по вашему ТЗ)
+            // Режим 1: 1 Картинка + 6 Кнопок текста
             if (currentQuestion.type === "text-answers") {
                 document.getElementById('test-category-title').textContent = "Определите знак по картинке";
                 document.getElementById('map-card').style.display = "flex";
                 document.getElementById('question-image').src = `${window.currentImgFolder}/${currentQuestion.name}.png`;
                 
-                let answers = [currentQuestion.name];
-                let wrongOptions = allAllowedNames.filter(name => name !== currentQuestion.name);
+                // Создаем массив уникальных отображаемых имен для кнопок, чтобы исключить дубли
+                let uniqueCleanAnswers = [cleanCorrectName];
+                
+                // Перемешиваем ложные варианты
+                let wrongOptions = allAllowedNames.filter(name => cleanNameForUser(name) !== cleanCorrectName);
                 wrongOptions.sort(() => 0.5 - Math.random());
-                for (let i = 0; i < 5; i++) { answers.push(wrongOptions[i]); }
-                answers.sort(() => 0.5 - Math.random());
+                
+                // Набираем ложные кнопки, очищая их имена от приписки (вариация)
+                for (let i = 0; i < wrongOptions.length; i++) {
+                    let cleanWrong = cleanNameForUser(wrongOptions[i]);
+                    if (!uniqueCleanAnswers.includes(cleanWrong)) {
+                        uniqueCleanAnswers.push(cleanWrong);
+                    }
+                    if (uniqueCleanAnswers.length === 6) break;
+                }
+                
+                uniqueCleanAnswers.sort(() => 0.5 - Math.random());
                 
                 container.className = "answers-grid";
-                answers.forEach(answer => {
+                uniqueCleanAnswers.forEach(answer => {
                     const button = document.createElement('button');
                     button.className = 'btn-answer';
                     button.textContent = answer;
-                    button.onclick = () => checkAnswer(button, answer, currentQuestion.name, "text");
+                    // Проверяем ответ по очищенному имени
+                    button.onclick = () => checkAnswer(button, answer, cleanCorrectName, "text");
                     container.appendChild(button);
                 });
 
             // Режим 2: Текст задания + 4 Картинки вариантов
             } else if (currentQuestion.type === "image-answers") {
-                document.getElementById('test-category-title').textContent = `Найдите изображение: "${currentQuestion.name}"`;
+                // Игроку пишется чистое задание: "Найдите изображение: Горизонталь"
+                document.getElementById('test-category-title').textContent = `Найдите изображение: "${cleanCorrectName}"`;
                 document.getElementById('map-card').style.display = "none";
                 
-                let variantNames = [currentQuestion.name];
-                let wrongOptions = allAllowedNames.filter(name => name !== currentQuestion.name);
+                let variantFiles = [currentQuestion.name];
+                let wrongOptions = allAllowedNames.filter(name => cleanNameForUser(name) !== cleanCorrectName);
                 wrongOptions.sort(() => 0.5 - Math.random());
-                for (let i = 0; i < 3; i++) { variantNames.push(wrongOptions[i].trim()); }
-                variantNames.sort(() => 0.5 - Math.random());
+                
+                for (let i = 0; i < 3; i++) { variantFiles.push(wrongOptions[i]); }
+                variantFiles.sort(() => 0.5 - Math.random());
                 
                 container.className = "images-answers-grid";
-                variantNames.forEach(vName => {
+                variantFiles.forEach(vFile => {
                     const button = document.createElement('button');
                     button.className = 'btn-image-variant';
                     const img = document.createElement('img');
-                    img.src = `${window.currentImgFolder}/${vName}.png`;
+                    img.src = `${window.currentImgFolder}/${vFile}.png`;
                     button.appendChild(img);
-                    button.onclick = () => checkAnswer(button, vName, currentQuestion.name, "image");
+                    // Сверяем нажатую картинку по её реальному файлу, очищенному до базового имени
+                    button.onclick = () => checkAnswer(button, cleanNameForUser(vFile), cleanCorrectName, "image");
                     container.appendChild(button);
                 });
             }
@@ -427,13 +449,13 @@
                 selectedButton.classList.add('wrong');
                 buttons.forEach(btn => {
                     if (mode === "text" && btn.textContent === correctAnswer) { btn.classList.add('correct'); }
-                    if (mode === "image" && btn.querySelector('img').src.includes(encodeSpreadsheetCell(correctAnswer))) { btn.classList.add('correct'); }
+                    if (mode === "image" && cleanNameForUser(decodeURIComponent(btn.querySelector('img').src.split('/').pop().replace('.png', ''))) === correctAnswer) { 
+                        btn.classList.add('correct'); 
+                    }
                 });
             }
             document.getElementById('next-btn').style.display = 'block';
         }
-
-        function encodeSpreadsheetCell(name) { return encodeURIComponent(name).replace(/'/g, "%27"); }
 
         function nextQuestion() {
             currentQuestionIndex++;
@@ -461,13 +483,12 @@
             document.getElementById('result-time-value').textContent = `Ваше время: ${timeString}`;
             
             let comment = ""; var percent = (score / totalQuestionsCount) * 100;
-            if (score === totalQuestionsCount) comment = "Пучечка, наша! Отличный результат! Карты ГГЦ изучены на высоком уровне. Иди на ПСР :)";
+            if (score === totalQuestionsCount) comment = "Пусечка наша! Отличный результат! Карты ГГЦ изучены на высоком уровне. Иди на ПСР :)";
             else if (percent >= 80) comment = "Хороший результат! Но есть незначительные ошибки.";
             else if (percent >= 50) comment = "Удовлетворительно. Рекомендуется повторить условные знаки ГГЦ.";
-            else comment = "Нужно потренироваться. Пройдите тест ещё раз!";
+            else comment = "Нужно потренироваться. Пройдите полный марафон ещё раз!";
             document.getElementById('result-comment').textContent = comment;
 
-            // Ваша рабочая ссылка макроса на месте
             var googleScriptUrl = "https://script.google.com/macros/s/AKfycbxwX2vDIt3Dcc1yaq_aIXV7YxyyoeahN3yjA_vs1KU10fsJmXJX49FcynaI6E5Enlir/exec";
 
             const payload = {
