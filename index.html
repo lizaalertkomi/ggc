@@ -117,9 +117,9 @@
         .map-card { background: #eef0f3; width: 100%; height: 180px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid var(--border-color); overflow: hidden; }
         .map-card img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-        /* Текстовые ответы (4 варианта) */
-        .answers-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
-        .btn-answer { background-color: var(--btn-menu-bg); color: var(--text-color); font-weight: 500; font-size: 14px; padding: 12px 15px; border: 1px solid transparent; border-radius: 8px; cursor: pointer; text-align: left; width: 100%; }
+        /* Текстовые ответы (6 вариантов) */
+        .answers-grid { display: flex; flex-direction: column; gap: 6px; margin-bottom: 15px; }
+        .btn-answer { background-color: var(--btn-menu-bg); color: var(--text-color); font-weight: 500; font-size: 14px; padding: 11px 14px; border: 1px solid transparent; border-radius: 8px; cursor: pointer; text-align: left; width: 100%; }
         .btn-answer:hover:not(:disabled) { background-color: var(--btn-menu-hover); border-color: var(--text-muted); }
         .btn-answer.correct { background-color: var(--success-color) !important; color: white !important; font-weight: 700; }
         .btn-answer.wrong { background-color: var(--error-color) !important; color: white !important; }
@@ -141,13 +141,13 @@
             body { padding: 65px 8px 10px 8px; }
             .container { padding: 15px 12px; border-radius: 8px; }
             .logo { font-size: 22px; }
-            .subtitle { margin-bottom: 15px; font-size: 11px; }
+            .subtitle { margin-bottom: 12px; font-size: 11px; }
             .logo-container { margin-bottom: 10px; }
             .welcome-block { margin-bottom: 15px; padding-bottom: 10px; }
             .welcome-title { font-size: 16px; }
-            .map-card { height: 120px; margin-bottom: 12px; }
-            .answers-grid { gap: 6px; margin-bottom: 12px; }
-            .btn-answer { font-size: 13px; padding: 10px 12px; border-radius: 6px; }
+            .map-card { height: 110px; margin-bottom: 12px; }
+            .answers-grid { gap: 5px; margin-bottom: 12px; }
+            .btn-answer { font-size: 12px; padding: 8px 12px; border-radius: 6px; }
             .btn-image-variant { height: 85px; padding: 4px; }
             .images-answers-grid { gap: 8px; margin-bottom: 12px; }
             .btn { padding: 12px; font-size: 14px; }
@@ -240,7 +240,7 @@
         let currentQuestionsList = [];
         let currentQuestionIndex = 0;
         let score = 0;
-        const totalQuestionsCount = 50; // Дистанция марафона
+        const totalQuestionsCount = 50; 
 
         let timerSeconds = 0;
         let timerInterval = null;
@@ -310,19 +310,15 @@
             }
             
             let list = [];
-            // Закидываем сначала все ваши 34 знака из Блока 5
             areaDatabase.forEach(name => list.push({ name: name.trim() }));
             
-            // Добираем 16 случайных повторок строго из вашей же базы
             while(list.length < totalQuestionsCount) {
                 let randomName = areaDatabase[Math.floor(Math.random() * areaDatabase.length)];
                 list.push({ name: randomName.trim() });
             }
             
-            // Перемешиваем марафон из 50 вопросов
             list.sort(() => 0.5 - Math.random());
             
-            // Распределяем типы карточек случайным образом (50% — текст, 50% — выбор картинки)
             currentQuestionsList = list.map(item => {
                 let mode = Math.random() > 0.5 ? "text-answers" : "image-answers";
                 return { name: item.name, type: mode };
@@ -348,7 +344,7 @@
 
             const allAllowedNames = areaDatabase.map(q => q.trim());
 
-            // Режим 1: Обычный (Картинка сверху, 4 компактные кнопки текста снизу)
+            // Режим 1: 1 Картинка + 6 Кнопок текста
             if (currentQuestion.type === "text-answers") {
                 document.getElementById('test-category-title').textContent = "Определите знак по картинке";
                 document.getElementById('map-card').style.display = "flex";
@@ -357,7 +353,7 @@
                 let answers = [currentQuestion.name];
                 let wrongOptions = allAllowedNames.filter(name => name !== currentQuestion.name);
                 wrongOptions.sort(() => 0.5 - Math.random());
-                for (let i = 0; i < 3; i++) { answers.push(wrongOptions[i]); }
+                for (let i = 0; i < 5; i++) { answers.push(wrongOptions[i]); }
                 answers.sort(() => 0.5 - Math.random());
                 
                 container.className = "answers-grid";
@@ -369,7 +365,7 @@
                     container.appendChild(button);
                 });
 
-            // Режим 2: Усложненный (Текст задания сверху, 4 картинки-варианта снизу)
+            // Режим 2: Текст задания + 4 Картинки вариантов
             } else if (currentQuestion.type === "image-answers") {
                 document.getElementById('test-category-title').textContent = `Найдите изображение: "${currentQuestion.name}"`;
                 document.getElementById('map-card').style.display = "none";
@@ -377,7 +373,7 @@
                 let variantNames = [currentQuestion.name];
                 let wrongOptions = allAllowedNames.filter(name => name !== currentQuestion.name);
                 wrongOptions.sort(() => 0.5 - Math.random());
-                for (let i = 0; i < 3; i++) { variantNames.push(wrongOptions[i]); }
+                for (let i = 0; i < 3; i++) { variantNames.push(wrongOptions[i].trim()); }
                 variantNames.sort(() => 0.5 - Math.random());
                 
                 container.className = "images-answers-grid";
@@ -439,13 +435,13 @@
             document.getElementById('result-time-value').textContent = `Ваше время: ${timeString}`;
             
             let comment = ""; var percent = (score / totalQuestionsCount) * 100;
-            if (score === totalQuestionsCount) comment = "Идеально! Полная победа на дистанции в 50 знаков ГГЦ!";
+            if (score === totalQuestionsCount) comment = "Молодец! Всё знаешь - иди на ПСР.";
             else if (percent >= 80) comment = "Отличный результат! Карты ГГЦ изучены на высоком уровне.";
             else if (percent >= 50) comment = "Хорошо, но есть над чем поработать.";
             else comment = "Нужно подтянуть теорию. Пройдите полный марафон ещё раз!";
             document.getElementById('result-comment').textContent = comment;
 
-            // --- ШАГ 1. СЮДА ВСТАВЛЯЕТСЯ ССЫЛКА МАКРОСА GOOGLE ТАБЛИЦ (/exec) ---
+            // --- ВАША ЖИВАЯ ССЫЛКА МАКРОСА УСПЕШНО ИНТЕГРИРОВАНА ---
             var googleScriptUrl = "https://script.google.com/macros/s/AKfycbzMTu4luH5HS48ECkapg2qN9fO5lpGYAn6C92aLpcUnzuEOrneIt1tuaFOJSjQdZBQT/exec";
 
             const payload = {
