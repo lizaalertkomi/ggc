@@ -5,37 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тренажер ГГЦ — ЛизаАлерт</title>
     <style>
-        /* Базовые цвета для СВЕТЛОЙ темы */
-        :root {
-            --bg-color: #f4f5f7;
-            --card-bg: #ffffff;
-            --la-orange: #ff6600;
-            --la-orange-hover: #e05500;
-            --text-color: #222222;
-            --text-muted: #666666;
-            --input-border: #cccccc;
-            --input-bg: #ffffff;
-            --btn-menu-bg: #eaeaea;
-            --btn-menu-hover: #dddddd;
-            --card-shadow: rgba(0, 0, 0, 0.08);
-            --border-color: #e0e0e0;
-            --success-color: #2e7d32;
-            --error-color: #c62828;
-        }
-
-        /* Базовые цвета для ТЕМНОЙ темы */
-        [data-theme="dark"] {
-            --bg-color: #1a1a1a;
-            --card-bg: #2d2d2d;
-            --text-color: #ffffff;
-            --text-muted: #aaaaaa;
-            --input-border: #444444;
-            --input-bg: #222222;
-            --btn-menu-bg: #3a3a3a;
-            --btn-menu-hover: #4a4a4a;
-            --card-shadow: rgba(0, 0, 0, 0.4);
-            --border-color: #444444;
-        }
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тренажер ГГЦ — ЛизаАлерт</title>
+    <style>
         * {
             box-sizing: border-box;
             margin: 0;
@@ -289,7 +265,7 @@
             document.getElementById('result-screen').classList.remove('active');
             document.getElementById('menu-screen').classList.add('active');
         }
-               function startTimer() {
+        function startTimer() {
             clearInterval(timerInterval);
             timerSeconds = 0;
             document.getElementById('timer-display').textContent = "Время: 00:00";
@@ -344,7 +320,7 @@
 
             const allAllowedNames = areaDatabase.map(q => q.trim());
 
-            // Режим 1: 1 Картинка + 6 Кнопок текста
+            // --- РЕЖИМ 1: 1 КАРТИНКА + 6 ВАРИАНТОВ ОТВЕТА ТЕКСТОМ ---
             if (currentQuestion.type === "text-answers") {
                 document.getElementById('test-category-title').textContent = "Определите знак по картинке";
                 document.getElementById('map-card').style.display = "flex";
@@ -354,6 +330,7 @@
                 let wrongOptions = allAllowedNames.filter(name => name !== currentQuestion.name);
                 wrongOptions.sort(() => 0.5 - Math.random());
                 
+                // Набираем ровно 5 ложных текстовых вариантов (итого ровно 6 кнопок на экране)
                 for (let i = 0; i < 5; i++) { answers.push(wrongOptions[i]); }
                 answers.sort(() => 0.5 - Math.random());
                 
@@ -366,7 +343,7 @@
                     container.appendChild(button);
                 });
 
-            // Режим 2: Текст задания + 4 Картинки вариантов
+            // --- РЕЖИМ 2: ТЕКСТ ЗАДАНИЯ + 4 КАРТИНКИ ВАРИАНТОВ ---
             } else if (currentQuestion.type === "image-answers") {
                 document.getElementById('test-category-title').textContent = `Найдите изображение: "${currentQuestion.name}"`;
                 document.getElementById('map-card').style.display = "none";
@@ -374,7 +351,6 @@
                 let variantNames = [currentQuestion.name];
                 let wrongOptions = allAllowedNames.filter(name => name !== currentQuestion.name);
                 wrongOptions.sort(() => 0.5 - Math.random());
-                
                 for (let i = 0; i < 3; i++) { variantNames.push(wrongOptions[i].trim()); }
                 variantNames.sort(() => 0.5 - Math.random());
                 
@@ -436,24 +412,15 @@
             const timeString = `${finalMins} ${minsText} ${finalSecs} ${secsText}`;
             document.getElementById('result-time-value').textContent = `Ваше время: ${timeString}`;
             
-            // Настройка комментариев строго по вашему ТЗ
-            let comment = "";
-            let percent = (score / totalQuestionsCount) * 100;
-
-            if (score === totalQuestionsCount) {
-                comment = "Отличный результат! Карты ГГЦ изучены на высоком уровне.";
-            } else if (percent >= 70) {
-                comment = "Хороший результат! Но есть незначительные ошибки.";
-            } else if (percent >= 50) {
-                comment = "Удовлетворительно. Рекомендуется повторить условные знаки ГГЦ.";
-            } else {
-                comment = "Нужно потренироваться. Пройдите полный марафон ещё раз!";
-            }
-            
+            let comment = ""; var percent = (score / totalQuestionsCount) * 100;
+            if (score === totalQuestionsCount) comment = "Отличный результат! Карты ГГЦ изучены на высоком уровне.";
+            else if (percent >= 80) comment = "Хороший результат! Но есть незначительные ошибки.";
+            else if (percent >= 50) comment = "Удовлетворительно. Рекомендуется повторить условные знаки ГГЦ.";
+            else comment = "Нужно потренироваться. Пройдите полный марафон ещё раз!";
             document.getElementById('result-comment').textContent = comment;
 
-            // Ваша рабочая ссылка макроса Google Таблиц
-            var googleScriptUrl = "https://google.com";
+            // Ваша рабочая ссылка макроса Google Таблиц успешно встроена:
+            var googleScriptUrl = "https://script.google.com/macros/s/AKfycbzMTu4luH5HS48ECkapg2qN9fO5lpGYAn6C92aLpcUnzuEOrneIt1tuaFOJSjQdZBQT/exec";
 
             const payload = {
                 fio: localStorage.getItem('la_fio') || 'Не указано',
@@ -480,3 +447,5 @@
 
         initTheme();
     </script>
+</body>
+</html>
