@@ -55,7 +55,6 @@
             padding-top: 75px;
             position: relative;
         }
-
         .theme-toggle-btn {
             position: absolute;
             top: 15px;
@@ -106,7 +105,6 @@
 
         .screen { display: none; }
         .screen.active { display: block; }
-
         .welcome-block { margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); text-align: left; }
         .welcome-title { font-size: 18px; font-weight: 700; }
         .user-name { color: var(--la-orange); }
@@ -117,14 +115,12 @@
         .map-card { background: #eef0f3; width: 100%; height: 22vh; min-height: 120px; max-height: 180px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; border: 1px solid var(--border-color); overflow: hidden; }
         .map-card img { max-width: 100%; max-height: 100%; object-fit: contain; padding: 5px; }
 
-        /* Текстовые ответы (6 вариантов) */
         .answers-grid { display: flex; flex-direction: column; gap: 6px; margin-bottom: 15px; max-height: 45vh; overflow-y: auto; padding-right: 2px; }
         .btn-answer { background-color: var(--btn-menu-bg); color: var(--text-color); font-weight: 500; font-size: 13px; padding: 10px 14px; border: 1px solid transparent; border-radius: 8px; cursor: pointer; text-align: left; width: 100%; line-height: 1.3; word-wrap: break-word; white-space: normal; }
         .btn-answer:hover:not(:disabled) { background-color: var(--btn-menu-hover); border-color: var(--text-muted); }
         .btn-answer.correct { background-color: var(--success-color) !important; color: white !important; font-weight: 700; }
         .btn-answer.wrong { background-color: var(--error-color) !important; color: white !important; }
 
-        /* Сетка для усложненного режима (4 картинки) */
         .images-answers-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
         .btn-image-variant { background-color: var(--btn-menu-bg); border: 2px solid var(--border-color); border-radius: 8px; padding: 6px; cursor: pointer; height: 14vh; min-height: 85px; max-height: 115px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .btn-image-variant:hover:not(:disabled) { border-color: var(--la-orange); }
@@ -220,7 +216,7 @@
         </div>
     </div>
     <script>
-        // База площадных знаков
+        // Чистая база площадных знаков из ТЗ
         const areaDatabase = [
             "Поверхность моховая", "Поверхности кочковатые", "Редкая жилая застройка",
             "Поверхности глинистые", "Кустарнички (багульник, черника, вереск и др.)", 
@@ -237,7 +233,7 @@
             "Растительность лишайниковая (ягель и др.)", "Заросли колючего кустарника"
         ];
 
-        // База линейных знаков строго из вашего текстового ТЗ
+        // Чистая база линейных знаков из ТЗ
         const linearDatabase = [
             "Пересохшее русло реки или ручья", "Обрыв земляной", "Горизонталь",
             "Горизонталь (вариация)", "Обрыв скалистый", "Железная дорога трёхпутная электрифицированная",
@@ -246,18 +242,33 @@
             "Граница государственного заповедника", "Кирпичная стена или металлическая ограда", "Пересыхающий ручей",
             "Ручей", "Река", "Сухой канал", "Река с обрывистым берегом", "Дорога полевая или лесная",
             "Тропа", "Дорога грунтовая", "Дорога грунтовая улучшенная", "Шоссе",
-            "Усовершенствованное шоссе", "Автомагистраль", "Фуникулёр", "Дорога с деревянным покрытием",
+            "Усовершенствованное шоссе", "Автомагистраль", "Фуникулёр", "Дорога с деревянным покрышем",
             "Железная дорога на насыпи", "Дорога проезжая только в холодное время года", "Железная дорога разобранная",
             "Просеки в лесу"
+        ];
+
+        // Строгая исходная база точечных знаков без лишних элементов
+        const pointDatabase = [
+            "Колодец", "Источник не оборудованный", "Источник оборудованный", "Брод по дну реки",
+            "Паромная переправа", "Плотина на реке", "Мост через реку", "фонтан",
+            "Карьер", "Карьер (вариация)", "Яма (вариация)", "Яма", "Курган (вариация)", "Курган",
+            "Отдельно стоящий дом", "Развалины", "Железнодорожная станция", "Завод или фабрика",
+            "Кладбище", "Дом лесника", "Церковь", "Электростанция, Завод или фабрика",
+            "Вход в пещеру или грот", "Мачта радио или телевизионная", "Торфоразработка",
+            "Заводская, фабричная или другая труба", "Камень-ориентир", "Памятник",
+            "Аэродром", "Метеорологическая станция", "Мельница ветряная", "Маяк береговой",
+            "Пасека", "Отметка высоты над уровнем моря", "Вышка легкая (наблюдательная, спортивная и т.п.)",
+            "Вышка капитальная (водонапорная и т.п.)", "Вышка нефтяная или газовая"
         ];
 
         let currentQuestionsList = [];
         let currentQuestionIndex = 0;
         let score = 0;
-        const totalQuestionsCount = 50; 
+        let totalQuestionsCount = 50; 
 
         let timerSeconds = 0;
         let timerInterval = null;
+        // Работа с темой оформления интерфейса
         function initTheme() {
             const savedTheme = localStorage.getItem('la_theme') || 'light';
             document.documentElement.setAttribute('data-theme', savedTheme);
@@ -275,10 +286,30 @@
         function updateThemeButton(theme) {
             const icon = document.getElementById('theme-icon');
             const text = document.getElementById('theme-text');
-            if (theme === 'dark') { icon.textContent = '🌙'; text.textContent = 'Темная тема'; }
-            else { icon.textContent = '☀️'; text.textContent = 'Светлая тема'; }
+            if (theme === 'dark') { 
+                icon.textContent = '🌙'; 
+                text.textContent = 'Темная тема'; 
+            } else { 
+                icon.textContent = '☀️'; 
+                text.textContent = 'Светлая тема'; 
+            }
         }
 
+        // Работа системного таймера
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerSeconds = 0;
+            document.getElementById('timer-display').textContent = "Время: 00:00";
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                const mins = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+                const secs = (timerSeconds % 60).toString().padStart(2, '0');
+                document.getElementById('timer-display').textContent = `Время: ${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function stopTimer() { clearInterval(timerInterval); }
+        // Валидация ФИО на первом экране
         function validateAndStart() {
             const fioInput = document.getElementById('fio').value.trim();
             const callsignInput = document.getElementById('callsign').value.trim();
@@ -303,52 +334,63 @@
             document.getElementById('result-screen').classList.remove('active');
             document.getElementById('menu-screen').classList.add('active');
         }
-              function startTimer() {
-            clearInterval(timerInterval);
-            timerSeconds = 0;
-            document.getElementById('timer-display').textContent = "Время: 00:00";
-            timerInterval = setInterval(() => {
-                timerSeconds++;
-                const mins = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
-                const secs = (timerSeconds % 60).toString().padStart(2, '0');
-                document.getElementById('timer-display').textContent = `Время: ${mins}:${secs}`;
-            }, 1000);
-        }
 
-        function stopTimer() { clearInterval(timerInterval); }
-
+        // Запуск теста со случайным повторением ваших исходных вопросов до 120 штук
         function startTest(type) {
             let activeDb = [];
+            let isAllMode = false;
             
             if (type === 'area') {
                 window.currentTestModeName = "Площадные ориентиры";
                 window.currentImgFolder = "plochad";
                 activeDb = areaDatabase;
+                totalQuestionsCount = 50;
             } else if (type === 'linear') {
                 window.currentTestModeName = "Линейные ориентиры";
                 window.currentImgFolder = "line";
                 activeDb = linearDatabase;
+                totalQuestionsCount = 50;
+            } else if (type === 'point') {
+                window.currentTestModeName = "Точечные ориентиры";
+                window.currentImgFolder = "point";
+                activeDb = pointDatabase;
+                totalQuestionsCount = 50;
+            } else if (type === 'all') {
+                window.currentTestModeName = "Общий тест";
+                isAllMode = true;
+                totalQuestionsCount = 120; // Общий марафон идет строго 120 вопросов
             } else {
-                alert('Этот режим находится в разработке. Пожалуйста, выберите "Площадные" или "Линейные ориентиры"');
                 return;
             }
 
             document.getElementById('test-category-title').textContent = window.currentTestModeName;
-            window.currentActiveTestDb = activeDb; 
 
             let list = [];
-            activeDb.forEach(name => list.push({ name: name.trim() }));
-            
-            while(list.length < totalQuestionsCount) {
-                let randomName = activeDb[Math.floor(Math.random() * activeDb.length)];
-                list.push({ name: randomName.trim() });
+            if (isAllMode) {
+                // Миксуем только ваши оригинальные базы данных
+                areaDatabase.forEach(name => list.push({ name: name.trim(), folder: "plochad" }));
+                linearDatabase.forEach(name => list.push({ name: name.trim(), folder: "line" }));
+                pointDatabase.forEach(name => list.push({ name: name.trim(), folder: "point" }));
+                window.currentActiveTestDb = [...areaDatabase, ...linearDatabase, ...pointDatabase];
+            } else {
+                window.currentActiveTestDb = activeDb;
+                activeDb.forEach(name => list.push({ name: name.trim(), folder: window.currentImgFolder }));
             }
             
+            // Если элементов в базе меньше, циклически копируем их для повтора (без генерации вымышленных слов)
+            let originalLength = list.length;
+            while(list.length < totalQuestionsCount) {
+                let randomItem = list[Math.floor(Math.random() * originalLength)];
+                list.push({ ...randomItem });
+            }
+            
+            // Тщательно перемешиваем финальный список, чтобы повторы шли вразнобой
             list.sort(() => 0.5 - Math.random());
+            list = list.slice(0, totalQuestionsCount);
             
             currentQuestionsList = list.map(item => {
                 let mode = Math.random() > 0.5 ? "text-answers" : "image-answers";
-                return { name: item.name, type: mode };
+                return { name: item.name, type: mode, folder: item.folder };
             });
 
             currentQuestionIndex = 0;
@@ -360,11 +402,12 @@
             startTimer();
             loadQuestion();
         }
-        // Вспомогательная функция, которая на лету прячет приписку "(вариация)" для игрока
+
+        // Фикс скобок: регулярное выражение безопасно вырезает (вариация) со скобками целиком
         function cleanNameForUser(name) {
             return name.replace(/\s*\(вариация\)/gi, "").trim();
         }
-
+        // Генерация карточки вопроса и сетки вариантов ответов
         function loadQuestion() {
             document.getElementById('next-btn').style.display = 'none';
             document.getElementById('question-counter').textContent = `Вопрос: ${currentQuestionIndex + 1}/${totalQuestionsCount}`;
@@ -373,23 +416,27 @@
             const container = document.getElementById('answers-container');
             container.innerHTML = '';
 
-            const allAllowedNames = window.currentActiveTestDb.map(q => q.trim());
+            const folder = currentQuestion.folder;
+            let poolDb = window.currentActiveTestDb;
+            if (window.currentTestModeName === "Общий тест") {
+                if (folder === "plochad") poolDb = areaDatabase;
+                else if (folder === "line") poolDb = linearDatabase;
+                else if (folder === "point") poolDb = pointDatabase;
+            }
+
+            const allAllowedNames = poolDb.map(q => q.trim());
             const cleanCorrectName = cleanNameForUser(currentQuestion.name);
 
-            // Режим 1: 1 Картинка + 6 Кнопок текста
+            // Режим 1: 1 Картинка + 6 Текстовых вариантов ответов
             if (currentQuestion.type === "text-answers") {
                 document.getElementById('test-category-title').textContent = "Определите знак по картинке";
                 document.getElementById('map-card').style.display = "flex";
-                document.getElementById('question-image').src = `${window.currentImgFolder}/${currentQuestion.name}.png`;
+                document.getElementById('question-image').src = `${folder}/${currentQuestion.name}.png`;
                 
-                // Создаем массив уникальных отображаемых имен для кнопок, чтобы исключить дубли
                 let uniqueCleanAnswers = [cleanCorrectName];
-                
-                // Перемешиваем ложные варианты
                 let wrongOptions = allAllowedNames.filter(name => cleanNameForUser(name) !== cleanCorrectName);
                 wrongOptions.sort(() => 0.5 - Math.random());
                 
-                // Набираем ложные кнопки, очищая их имена от приписки (вариация)
                 for (let i = 0; i < wrongOptions.length; i++) {
                     let cleanWrong = cleanNameForUser(wrongOptions[i]);
                     if (!uniqueCleanAnswers.includes(cleanWrong)) {
@@ -405,22 +452,29 @@
                     const button = document.createElement('button');
                     button.className = 'btn-answer';
                     button.textContent = answer;
-                    // Проверяем ответ по очищенному имени
                     button.onclick = () => checkAnswer(button, answer, cleanCorrectName, "text");
                     container.appendChild(button);
                 });
 
-            // Режим 2: Текст задания + 4 Картинки вариантов
+            // Режим 2: Название знака + 4 Картинки-варианта ответов
             } else if (currentQuestion.type === "image-answers") {
-                // Игроку пишется чистое задание: "Найдите изображение: Горизонталь"
                 document.getElementById('test-category-title').textContent = `Найдите изображение: "${cleanCorrectName}"`;
                 document.getElementById('map-card').style.display = "none";
                 
-                let variantFiles = [currentQuestion.name];
+                let variantFiles = [{ name: currentQuestion.name, folder: folder }];
                 let wrongOptions = allAllowedNames.filter(name => cleanNameForUser(name) !== cleanCorrectName);
                 wrongOptions.sort(() => 0.5 - Math.random());
                 
-                for (let i = 0; i < 3; i++) { variantFiles.push(wrongOptions[i]); }
+                let combinedWrong = [];
+                wrongOptions.forEach(wName => {
+                    if(!combinedWrong.some(item => cleanNameForUser(item.name) === cleanNameForUser(wName))) {
+                        combinedWrong.push({ name: wName, folder: folder });
+                    }
+                });
+
+                for (let i = 0; i < Math.min(3, combinedWrong.length); i++) { 
+                    variantFiles.push(combinedWrong[i]); 
+                }
                 variantFiles.sort(() => 0.5 - Math.random());
                 
                 container.className = "images-answers-grid";
@@ -428,15 +482,15 @@
                     const button = document.createElement('button');
                     button.className = 'btn-image-variant';
                     const img = document.createElement('img');
-                    img.src = `${window.currentImgFolder}/${vFile}.png`;
+                    img.src = `${vFile.folder}/${vFile.name}.png`;
                     button.appendChild(img);
-                    // Сверяем нажатую картинку по её реальному файлу, очищенному до базового имени
-                    button.onclick = () => checkAnswer(button, cleanNameForUser(vFile), cleanCorrectName, "image");
+                    button.onclick = () => checkAnswer(button, cleanNameForUser(vFile.name), cleanCorrectName, "image");
                     container.appendChild(button);
                 });
             }
         }
 
+        // Проверка клика пользователя по кнопкам
         function checkAnswer(selectedButton, selectedAnswer, correctAnswer, mode) {
             const selector = mode === "text" ? '.btn-answer' : '.btn-image-variant';
             const buttons = document.querySelectorAll(selector);
@@ -467,7 +521,7 @@
             let n = Math.abs(number); n %= 100; if (n >= 5 && n <= 20) return many;
             n %= 10; if (n === 1) return one; if (n >= 2 && n <= 4) return two; return many;
         }
-
+        // Показ финальных результатов и формирование POST-запроса в таблицу
         function showResults() {
             document.getElementById('test-screen').classList.remove('active');
             document.getElementById('result-screen').classList.add('active');
