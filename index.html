@@ -358,7 +358,7 @@
             } else if (type === 'all') {
                 window.currentTestModeName = "Общий тест";
                 isAllMode = true;
-                totalQuestionsCount = 120; // Общий марафон идет строго 120 вопросов
+                totalQuestionsCount = 120; // Общий тест состоит из 120 вопросов
             } else {
                 return;
             }
@@ -540,7 +540,7 @@
             if (score === totalQuestionsCount) comment = "Пусечка наша! Отличный результат! Карты ГГЦ изучены на высоком уровне. Иди на ПСР :)";
             else if (percent >= 80) comment = "Хороший результат! Но есть незначительные ошибки.";
             else if (percent >= 50) comment = "Удовлетворительно. Рекомендуется повторить условные знаки ГГЦ.";
-            else comment = "Нужно потренироваться. Пройдите полный марафон ещё раз!";
+            else comment = "Нужно потренироваться. Пройдите тест ещё раз!";
             document.getElementById('result-comment').textContent = comment;
 
             var googleScriptUrl = "https://script.google.com/macros/s/AKfycbxwX2vDIt3Dcc1yaq_aIXV7YxyyoeahN3yjA_vs1KU10fsJmXJX49FcynaI6E5Enlir/exec";
